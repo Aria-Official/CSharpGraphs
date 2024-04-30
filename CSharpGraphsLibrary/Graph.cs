@@ -3,28 +3,16 @@
     public class Graph<T> where T : notnull
     {
         readonly Dictionary<T, HashSet<T>> mapping;
-        public int VertexCount { get; private set; }
+        public int VertexCount => mapping.Keys.Count;
         public int EdgeCount { get; private set; }
         Graph()
         {
             mapping = new();
-            VertexCount = 0;
             EdgeCount = 0;
         }
         Graph(IEnumerable<T> vertices) : this()
         {
-            foreach (T v in vertices)
-            {
-                mapping.Add(v, new());
-                ++VertexCount;
-            }
-        }
-        Graph(T[] vertices)
-        {
-            mapping = new();
             foreach (T v in vertices) mapping.Add(v, new());
-            VertexCount = vertices.Length;
-            EdgeCount = 0;
         }
         public static Graph<T> Create() => new();
         public static Graph<T> Create(IEnumerable<T> vertices)
@@ -49,7 +37,7 @@
                 return;
             }
             throw new InvalidOperationException(
-                "RemoveVertex() failed. Specified vertex was not in the graph");
+                "RemoveVertex() failed. Specified vertex was not in the graph.");
         }
         public bool TryRemoveVertex(T v)
         {
@@ -64,27 +52,22 @@
         public void AddEdge(T v1, T v2, bool orientedEdge)
         {
             if (!mapping.ContainsKey(v1)) throw new InvalidOperationException(
-                $"AddEdge() failed. Vertex {v1} was not in the graph");
+                $"AddEdge() failed. Vertex {v1} was not in the graph.");
             if (!mapping.ContainsKey(v2)) throw new InvalidOperationException(
-                $"AddEdge() failed. Vertex {v2} was not in the graph");
-            if (orientedEdge)
-            {
-                if (mapping[v1].Contains(v2)) return;
-                mapping[v1].Add(v2);
-            }
+                $"AddEdge() failed. Vertex {v2} was not in the graph.");
+            if (orientedEdge) mapping[v1].Add(v2);
             else
             {
-                if (!mapping[v1].Contains(v2)) mapping[v1].Add(v2);
-                if (mapping[v2].Contains(v1)) return;
+                mapping[v1].Add(v2);
                 mapping[v2].Add(v1);
             }
         }
         public void RemoveEdge(T v1, T v2, bool orientedEdge)
         {
             if (!mapping.ContainsKey(v1)) throw new InvalidOperationException(
-                $"RemoveEdge() failed. Vertex {v1} was not in the graph");
+                $"RemoveEdge() failed. Vertex {v1} was not in the graph.");
             if (!mapping.ContainsKey(v2)) throw new InvalidOperationException(
-                $"RemoveEdge() failed. Vertex {v2} was not in the graph");
+                $"RemoveEdge() failed. Vertex {v2} was not in the graph.");
             if (orientedEdge) mapping[v1].Remove(v2);
             else
             {
@@ -102,9 +85,22 @@
         {
             foreach (T v in mapping.Keys) yield return v;
         }
-        /*public IEnumerable<(T, T)> Edges()
+        public IEnumerable<(T, T, bool)> Edges()
         {
-
-        }*/
+            HashSet<(T, T, bool)> edges = new();
+            foreach (T v in mapping.Keys)
+            {
+                foreach (T neighbour in mapping[v])
+                {
+                    if (edges.Contains((v, neighbour, false)))
+                    {
+                        edges.Remove((v, neighbour, false));
+                        edges.Add((neighbour, v, true));
+                    }
+                    else edges.Add((v, neighbour, false));
+                }
+            }
+            return edges;
+        }
     }
 }
