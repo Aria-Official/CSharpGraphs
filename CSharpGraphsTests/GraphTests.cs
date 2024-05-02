@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using CSharpGraphsLibrary;
+﻿using CSharpGraphsLibrary;
+using NUnit.Framework;
 namespace CSharpGraphsTests
 {
     [TestFixture]
@@ -10,8 +10,7 @@ namespace CSharpGraphsTests
         {
             var graph = Graph<int>.Create();
             Assert.That(graph.EdgeCount == 0 &
-                        graph.VertexCount == 0 &
-                        !graph.Vertices().Any() &
+                        graph.Vertices().Count == 0 &
                         !graph.Edges().Any());
         }
         [Test]
@@ -25,9 +24,9 @@ namespace CSharpGraphsTests
         {
             HashSet<int> vertices = new() { 1, 2, 3, 4, 5 };
             var graph = Graph<int>.Create(vertices);
-            IEnumerable<int> verts = graph.Vertices();
+            HashSet<int> verts = graph.Vertices();
             Assert.That(graph.EdgeCount == 0 &
-                        graph.VertexCount == 5 &
+                        verts.Count == 5 &
                         verts.Contains(1) &
                         verts.Contains(2) &
                         verts.Contains(3) &
@@ -36,18 +35,52 @@ namespace CSharpGraphsTests
                         !graph.Edges().Any());
         }
         [Test]
+        public void CreateWithEnumerableWithSameVertices()
+        {
+            int[] vertices = { 1, 2, 3, 2, 1, 2, 5, 2, 3, 4, 4, 5 };
+            var graph = Graph<int>.Create(vertices);
+            HashSet<int> verts = graph.Vertices();
+            Assert.That(verts.Count == 5 &&
+                        verts.Contains(1) &&
+                        verts.Contains(2) &&
+                        verts.Contains(3) &&
+                        verts.Contains(4) &&
+                        verts.Contains(5) &&
+                        !graph.Edges().Any());
+        }
+        [Test]
+        public void CreateWithParamsWithSameVertices()
+        {
+            var graph = Graph<int>.Create(1, 2, 2, 3, 3, 3, 3, 3, 4, 5, 5, 5, 4);
+            HashSet<int> verts = graph.Vertices();
+            Assert.That(verts.Count == 5 &&
+                        verts.Contains(1) &&
+                        verts.Contains(2) &&
+                        verts.Contains(3) &&
+                        verts.Contains(4) &&
+                        verts.Contains(5) &&
+                        !graph.Edges().Any());
+        }
+        [Test]
         public void CreateWithParams()
         {
             var graph = Graph<int>.Create(1, 2, 3, 4, 5);
-            IEnumerable<int> verts = graph.Vertices();
+            HashSet<int> verts = graph.Vertices();
             Assert.That(graph.EdgeCount == 0 &
-                        graph.VertexCount == 5 &
                         verts.Contains(1) &
                         verts.Contains(2) &
                         verts.Contains(3) &
                         verts.Contains(4) &
                         verts.Contains(5) &
                         !graph.Edges().Any());
+        }
+        [Test]
+        public void AddVertexAddsNew()
+        {
+            var graph = Graph<int>.Create();
+            graph.AddVertex(1);
+            HashSet<int> verts = graph.Vertices();
+            Assert.That(verts.Count == 1 && verts.Contains(1));
         }
         [Test]
         public void AddVertexThrowsOnSame()
@@ -108,18 +141,36 @@ namespace CSharpGraphsTests
             Assert.Pass();
         }
         [Test]
+        public void DisconnectThrowsOnFirstMissing()
+        {
+            var graph = Graph<int>.Create(1, 2);
+            Assert.Throws<InvalidOperationException>(() => graph.Disconnect(3, 1));
+        }
+        [Test]
+        public void DisconnectThrowsOnSecondMissing()
+        {
+            var graph = Graph<int>.Create(1, 2);
+            Assert.Throws<InvalidOperationException>(() => graph.Disconnect(1, 3));
+        }
+        [Test]
         public void Disconnect()
         {
-            var graph = Graph<int>.Create(1, 2, 3);
+            var graph = Graph<int>.Create(1, 2);
             graph.Connect(1, 2, false);
             if (graph.EdgeCount != 1) Assert.Fail();
-            graph.Disconnect(1, 2, true);
-            if (graph.EdgeCount != 1) Assert.Fail();
-            graph.Disconnect(2, 1, true);
+            graph.Disconnect(1, 2);
             if (graph.EdgeCount != 0) Assert.Fail();
-            graph.Connect(2, 3, false);
+            graph.Connect(2, 1, true);
             if (graph.EdgeCount != 1) Assert.Fail();
-            graph.Disconnect(3, 2, false);
+            graph.Disconnect(1, 2);
+            if (graph.EdgeCount != 0) Assert.Fail();
+            graph.Connect(1, 2, false);
+            if (graph.EdgeCount != 1) Assert.Fail();
+            graph.Disconnect(2, 1);
+            if (graph.EdgeCount != 0) Assert.Fail();
+            graph.Connect(2, 1, true);
+            if (graph.EdgeCount != 1) Assert.Fail();
+            graph.Disconnect(2, 1);
             if (graph.EdgeCount != 0) Assert.Fail();
             Assert.Pass();
         }
@@ -164,19 +215,24 @@ namespace CSharpGraphsTests
             graph.Connect(1, 2, true);
             graph.Connect(1, 3, true);
             graph.Connect(1, 4, false);
-            graph.Connect(2, 1, true);
             HashSet<int> neighboursOf1 = graph.NeighboursOf(1);
             Assert.That(neighboursOf1.Contains(2) &&
                         neighboursOf1.Contains(3) &&
                         neighboursOf1.Contains(4));
         }
         [Test]
-        public void Vertices()
+        public void Edges()
         {
-            var graph = Graph<int>.Create(1, 2, 3, 4, 5, 0, -1);
-            var vertices = graph.Vertices();
-            for (int i = -1; i < 6;) if (!vertices.Contains(i++)) Assert.Fail();
-            Assert.Pass();
+            var graph = Graph<int>.Create(1, 2, 3, 4);
+            graph.Connect(1, 2, true);
+            graph.Connect(1, 3, true);
+            graph.Connect(1, 4, false);
+            graph.Connect(2, 1, true);
+            var edges = graph.Edges();
+            Assert.That(edges.Contains((1, 3, true)) &&
+                        edges.Contains((1, 4, false)) &&
+                        edges.Contains((2, 1, true)) &&
+                        edges.Count == 3);
         }
     }
 }

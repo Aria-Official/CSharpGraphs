@@ -6,10 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="CSharpDataStructuresLibrary">
-      <HintPath>..\..\CSharpDataStructures\CSharpDataStructuresLibrary\bin\Release\net7.0\CSharpDataStructuresLibrary.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

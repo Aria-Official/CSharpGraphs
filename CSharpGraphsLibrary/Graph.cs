@@ -12,83 +12,88 @@
         }
         Graph(IEnumerable<T> vertices) : this()
         {
-            foreach (T v in vertices) mapping.Add(v, new());
+            foreach (T v in vertices) mapping.TryAdd(v, new());
         }
         public static Graph<T> Create() => new();
         public static Graph<T> Create(IEnumerable<T> vertices)
         {
             if (vertices is null) throw new ArgumentNullException(
-                $"Specified enumerable collection of vertices '{vertices}' was null.");
+                $"Create() failed. Specified enumerable collection of vertices '{vertices}' was null.");
             return new Graph<T>(vertices);
         }
         public static Graph<T> Create(params T[] vertices) => new(vertices);
         public void AddVertex(T v)
         {
-            if (mapping.ContainsKey(v)) throw new InvalidOperationException(
-                $"Specified vertex '{v}' was already in the graph.");
-            mapping.Add(v, new());
+            if (!mapping.TryAdd(v, new())) throw new InvalidOperationException(
+                $"AddVertex() failed. Specified vertex '{v}' was already in the graph.");
         }
         public void RemoveVertex(T v)
         {
             if (!mapping.ContainsKey(v)) throw new InvalidOperationException(
-                $"Specified vertex '{v}' was not in the graph.");
-            foreach (T neighbourForward in mapping[v]) Disconnect(v, neighbourForward, false);
-            foreach (T neighbourBackward in mapping.Keys) Disconnect(neighbourBackward, v, true);
+                $"RemoveVertex() was impossible. Specified vertex '{v}' was not in the graph.");
+            foreach (T neighbourForward in mapping[v]) Disconnect(v, neighbourForward);
+            foreach (T neighbourBackward in mapping.Keys) Disconnect(neighbourBackward, v);
             mapping.Remove(v);
         }
-        public bool HasVertex(T vertex) => mapping.ContainsKey(vertex);
+        public bool HasVertex(T v) => mapping.ContainsKey(v);
+        public HashSet<T> NeighboursOf(T v)
+        {
+            bool found = mapping.TryGetValue(v, out var neighbours);
+            if (found) return neighbours!;
+            throw new InvalidOperationException(
+                $"NeighboursOf() failed. Specified vertex '{v}' was not in the graph.");
+        }
         public void Connect(T v1, T v2, bool orientedEdge)
         {
             if (!mapping.ContainsKey(v1)) throw new InvalidOperationException(
-                $"Specified vertex '{v1}' was not in the graph.");
+                $"Connect() failed. Specified vertex '{v1}' was not in the graph.");
             if (!mapping.ContainsKey(v2)) throw new InvalidOperationException(
-                $"Specified vertex '{v2}' was not in the graph.");
-            if (orientedEdge)
+                $"Connect() failed. Specified vertex '{v2}' was not in the graph.");
+            if (mapping[v1].Contains(v2))
             {
-                if (mapping[v1].Add(v2) && !mapping[v2].Contains(v1)) ++EdgeCount;
+                if (mapping[v2].Contains(v1))
+                {
+                    if (orientedEdge) mapping[v2].Remove(v1);
+                }
+                else if (!orientedEdge) mapping[v2].Add(v1);
             }
             else
             {
-                if (mapping[v1].Add(v2) & mapping[v2].Add(v1)) ++EdgeCount;
+                if (mapping[v2].Contains(v1))
+                {
+                    if (!orientedEdge) return;
+                    mapping[v2].Remove(v1);
+                    mapping[v1].Add(v2);
+                }
+                else
+                {
+                    mapping[v1].Add(v2);
+                    if (!orientedEdge) mapping[v2].Add(v1);
+                    ++EdgeCount;
+                }
             }
         }
-        public void Disconnect(T v1, T v2, bool orientedEdge)
+        public void Disconnect(T v1, T v2)
         {
             if (!mapping.ContainsKey(v1)) throw new InvalidOperationException(
-                $"Specified vertex '{v1}' was not in the graph.");
+                $"Disconnect() was impossible. Specified vertex '{v1}' was not in the graph.");
             if (!mapping.ContainsKey(v2)) throw new InvalidOperationException(
-                $"Specified vertex '{v2}' was not in the graph.");
-            if (orientedEdge)
-            {
-                if (mapping[v1].Remove(v2) && !mapping[v2].Contains(v1)) --EdgeCount;
-            }
-            else
-            {
-                bool forward = mapping[v1].Remove(v2), backward = mapping[v2].Remove(v1);
-                if (forward)
-                {
-                    if (backward || !mapping[v2].Contains(v1)) --EdgeCount;
-                }
-                else if (backward) --EdgeCount;
-            }
+                $"Disconnect() was impossible. Specified vertex '{v2}' was not in the graph.");
+            if (mapping[v1].Remove(v2) | mapping[v2].Remove(v1)) --EdgeCount;
         }
         public bool HasEdge(T v1, T v2, bool orientedEdge)
         {
             if (!mapping.ContainsKey(v1) || !mapping.ContainsKey(v2)) return false;
             if (orientedEdge) return mapping[v1].Contains(v2);
-            return mapping[v1].Contains(v2) & mapping[v2].Contains(v1);
+            return mapping[v1].Contains(v2) && mapping[v2].Contains(v1);
         }
-        public HashSet<T> NeighboursOf(T v)
+        public HashSet<T> Vertices()
         {
-            if (!mapping.ContainsKey(v)) throw new InvalidOperationException(
-                $"Specified vertex '{v}' was not in the graph.");
-            return mapping[v];
+            HashSet<T> vertices = new();
+            foreach (T vertex in mapping.Keys) vertices.Add(vertex);
+            return vertices;
         }
-        public IEnumerable<T> Vertices()
-        {
-            foreach (T v in mapping.Keys) yield return v;
-        }
-        public IEnumerable<(T, T, bool)> Edges()
+        public HashSet<(T, T, bool)> Edges()
         {
             HashSet<(T, T, bool)> edges = new();
             foreach (T v in mapping.Keys)
