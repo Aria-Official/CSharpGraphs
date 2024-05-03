@@ -27,74 +27,100 @@
             if (!mapping.TryAdd(v, new())) throw new InvalidOperationException(
                 $"AddVertex() failed. Specified vertex '{v}' was already in the graph.");
         }
+        public bool TryAddVertex(T v) => mapping.TryAdd(v, new());
         public void RemoveVertex(T v)
         {
-            if (!mapping.ContainsKey(v)) throw new InvalidOperationException(
+            if (!mapping.TryGetValue(v, out var neighbours)) throw new InvalidOperationException(
                 $"RemoveVertex() was impossible. Specified vertex '{v}' was not in the graph.");
-            foreach (T neighbourForward in mapping[v]) Disconnect(v, neighbourForward);
-            foreach (T neighbourBackward in mapping.Keys) Disconnect(neighbourBackward, v);
+            foreach (T pointed in neighbours!) Disconnect(v, pointed);
+            foreach (T pointing in mapping.Keys) Disconnect(pointing, v);
             mapping.Remove(v);
         }
-        public bool HasVertex(T v) => mapping.ContainsKey(v);
-        public HashSet<T> NeighboursOf(T v)
+        public bool TryRemoveVertex(T v)
         {
-            bool found = mapping.TryGetValue(v, out var neighbours);
-            if (found) return neighbours!;
-            throw new InvalidOperationException(
-                $"NeighboursOf() failed. Specified vertex '{v}' was not in the graph.");
+            if (!mapping.TryGetValue(v, out var neighbours)) return false;
+            foreach (T pointed in neighbours!) Disconnect(v, pointed);
+            foreach (T pointing in mapping.Keys) Disconnect(pointing, v);
+            return mapping.Remove(v); // This line is designed to always return true.
         }
-        public void Connect(T v1, T v2, bool orientedEdge)
+        public bool HasVertex(T v) => mapping.ContainsKey(v);
+        public IReadOnlySet<T>? NeighboursOf(T v)
         {
-            if (!mapping.ContainsKey(v1)) throw new InvalidOperationException(
-                $"Connect() failed. Specified vertex '{v1}' was not in the graph.");
-            if (!mapping.ContainsKey(v2)) throw new InvalidOperationException(
-                $"Connect() failed. Specified vertex '{v2}' was not in the graph.");
-            if (mapping[v1].Contains(v2))
+            if (mapping.TryGetValue(v, out var neighbours)) return neighbours!;
+            return null;
+        }
+        void Connect(T v1, T v2, HashSet<T> set1, HashSet<T> set2, bool orientedEdge)
+        {
+            if (set1.Contains(v2))
             {
-                if (mapping[v2].Contains(v1))
+                if (set2.Contains(v1))
                 {
-                    if (orientedEdge) mapping[v2].Remove(v1);
+                    if (orientedEdge) set2.Remove(v1);
                 }
-                else if (!orientedEdge) mapping[v2].Add(v1);
+                else if (!orientedEdge) set2.Add(v1);
             }
             else
             {
-                if (mapping[v2].Contains(v1))
+                if (set2.Contains(v1))
                 {
                     if (!orientedEdge) return;
-                    mapping[v2].Remove(v1);
-                    mapping[v1].Add(v2);
+                    set2.Remove(v1);
+                    set1.Add(v2);
                 }
                 else
                 {
-                    mapping[v1].Add(v2);
-                    if (!orientedEdge) mapping[v2].Add(v1);
+                    set1.Add(v2);
+                    if (!orientedEdge) set2.Add(v1);
                     ++EdgeCount;
                 }
             }
         }
+        public void Connect(T v1, T v2, bool orientedEdge)
+        {
+            if (!mapping.TryGetValue(v1, out var set1)) throw new InvalidOperationException(
+                $"Connect() failed. Specified vertex '{v1}' was not in the graph.");
+            if (!mapping.TryGetValue(v2, out var set2)) throw new InvalidOperationException(
+                $"Connect() failed. Specified vertex '{v2}' was not in the graph.");
+            Connect(v1, v2, set1, set2, orientedEdge);
+        }
+        public bool TryConnect(T v1, T v2, bool orientedEdge)
+        {
+            if (!mapping.TryGetValue(v1, out var set1)) return false;
+            if (!mapping.TryGetValue(v2, out var set2)) return false;
+            Connect(v1, v2, set1, set2, orientedEdge);
+            return true;
+        }
         public void Disconnect(T v1, T v2)
         {
-            if (!mapping.ContainsKey(v1)) throw new InvalidOperationException(
+            if (!mapping.TryGetValue(v1, out var set1)) throw new InvalidOperationException(
                 $"Disconnect() was impossible. Specified vertex '{v1}' was not in the graph.");
-            if (!mapping.ContainsKey(v2)) throw new InvalidOperationException(
+            if (!mapping.TryGetValue(v2, out var set2)) throw new InvalidOperationException(
                 $"Disconnect() was impossible. Specified vertex '{v2}' was not in the graph.");
-            if (mapping[v1].Remove(v2) | mapping[v2].Remove(v1)) --EdgeCount;
+            if (set1.Remove(v2) | set2.Remove(v1)) --EdgeCount;
+        }
+        public bool TryDisconnect(T v1, T v2)
+        {
+            if (!mapping.TryGetValue(v1, out var set1)) return false;
+            if (!mapping.TryGetValue(v2, out var set2)) return false;
+            if (set1.Remove(v2) | set2.Remove(v1)) --EdgeCount;
+            return true;
         }
         public bool HasEdge(T v1, T v2, bool orientedEdge)
         {
-            if (!mapping.ContainsKey(v1) || !mapping.ContainsKey(v2)) return false;
-            if (orientedEdge) return mapping[v1].Contains(v2);
-            return mapping[v1].Contains(v2) && mapping[v2].Contains(v1);
+            if (!mapping.TryGetValue(v1, out var set1) || !mapping.TryGetValue(v2, out var set2)) return false;
+            if (orientedEdge) return set1.Contains(v2);
+            return set1.Contains(v2) && set2.Contains(v1);
         }
-        public HashSet<T> Vertices()
+        public HashSet<T>? Vertices()
         {
+            if (VertexCount == 0) return null;
             HashSet<T> vertices = new();
-            foreach (T vertex in mapping.Keys) vertices.Add(vertex);
+            vertices.UnionWith(mapping.Keys);
             return vertices;
         }
-        public HashSet<(T, T, bool)> Edges()
+        public HashSet<(T, T, bool)>? Edges()
         {
+            if (EdgeCount == 0) return null;
             HashSet<(T, T, bool)> edges = new();
             foreach (T v in mapping.Keys)
             {
