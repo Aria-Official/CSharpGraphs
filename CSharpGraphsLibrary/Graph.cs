@@ -102,8 +102,8 @@
         {
             if (!mapping.TryGetValue(v1, out var set1)) return false;
             if (!mapping.TryGetValue(v2, out var set2)) return false;
-            if (set1.Remove(v2) | set2.Remove(v1)) --EdgeCount;
-            return true;
+            if (set1.Remove(v2) | set2.Remove(v1)) { --EdgeCount; return true; }
+            return false;
         }
         public bool HasEdge(T v1, T v2, bool orientedEdge)
         {

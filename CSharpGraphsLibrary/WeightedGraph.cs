@@ -116,8 +116,8 @@
         {
             if (!mapping.TryGetValue(v1, out var dict1)) return false;
             if (!mapping.TryGetValue(v2, out var dict2)) return false;
-            if (dict1.Remove(v2) | dict2.Remove(v1)) --EdgeCount;
-            return true;
+            if (dict1.Remove(v2) | dict2.Remove(v1)) { --EdgeCount; return true; }
+            return false;
         }
         public bool HasEdge(TVertex v1, TVertex v2, bool orientedEdge)
         {
