@@ -18,20 +18,20 @@
         public static Graph<T> Create(IEnumerable<T> vertices)
         {
             if (vertices is null) throw new ArgumentNullException(
-                $"Create() failed. Specified enumerable collection of vertices '{vertices}' was null.");
+                $"Specified enumerable collection of vertices '{vertices}' was null.");
             return new Graph<T>(vertices);
         }
         public static Graph<T> Create(params T[] vertices) => new(vertices);
         public void AddVertex(T v)
         {
             if (!mapping.TryAdd(v, new())) throw new InvalidOperationException(
-                $"AddVertex() failed. Specified vertex '{v}' was already in the graph.");
+                $"Specified vertex '{v}' was already in the graph.");
         }
         public bool TryAddVertex(T v) => mapping.TryAdd(v, new());
         public void RemoveVertex(T v)
         {
             if (!mapping.TryGetValue(v, out var neighbours)) throw new InvalidOperationException(
-                $"RemoveVertex() was impossible. Specified vertex '{v}' was not in the graph.");
+                $"Specified vertex '{v}' was not in the graph.");
             foreach (T pointed in neighbours!) Disconnect(v, pointed);
             foreach (T pointing in mapping.Keys) Disconnect(pointing, v);
             mapping.Remove(v);
@@ -78,9 +78,9 @@
         public void Connect(T v1, T v2, bool orientedEdge)
         {
             if (!mapping.TryGetValue(v1, out var set1)) throw new InvalidOperationException(
-                $"Connect() failed. Specified vertex '{v1}' was not in the graph.");
+                $"Specified vertex '{v1}' was not in the graph.");
             if (!mapping.TryGetValue(v2, out var set2)) throw new InvalidOperationException(
-                $"Connect() failed. Specified vertex '{v2}' was not in the graph.");
+                $"Specified vertex '{v2}' was not in the graph.");
             Connect(v1, v2, set1, set2, orientedEdge);
         }
         public bool TryConnect(T v1, T v2, bool orientedEdge)
@@ -93,9 +93,9 @@
         public void Disconnect(T v1, T v2)
         {
             if (!mapping.TryGetValue(v1, out var set1)) throw new InvalidOperationException(
-                $"Disconnect() was impossible. Specified vertex '{v1}' was not in the graph.");
+                $"Specified vertex '{v1}' was not in the graph.");
             if (!mapping.TryGetValue(v2, out var set2)) throw new InvalidOperationException(
-                $"Disconnect() was impossible. Specified vertex '{v2}' was not in the graph.");
+                $"Specified vertex '{v2}' was not in the graph.");
             if (set1.Remove(v2) | set2.Remove(v1)) --EdgeCount;
         }
         public bool TryDisconnect(T v1, T v2)

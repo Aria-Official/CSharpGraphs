@@ -18,20 +18,20 @@
         public static WeightedGraph<TVertex, TEdgeWeight> Create(IEnumerable<TVertex> vertices)
         {
             if (vertices is null) throw new ArgumentNullException(
-                $"Create() failed. Specified enumerable collection of vertices '{vertices}' was null.");
+                $"Specified enumerable collection of vertices '{vertices}' was null.");
             return new WeightedGraph<TVertex, TEdgeWeight>(vertices);
         }
         public static WeightedGraph<TVertex, TEdgeWeight> Create(params TVertex[] vertices) => new(vertices);
         public void AddVertex(TVertex v)
         {
             if (!mapping.TryAdd(v, new())) throw new InvalidOperationException(
-                $"AddVertex() failed. Specified vertex '{v}' was already in the graph.");
+                $"Specified vertex '{v}' was already in the graph.");
         }
         public bool TryAddVertex(TVertex v) => mapping.TryAdd(v, new());
         public void RemoveVertex(TVertex v)
         {
             if (!mapping.TryGetValue(v, out var neighbours)) throw new InvalidOperationException(
-                $"RemoveVertex() was impossible. Specified vertex '{v}' was not in the graph.");
+                $"Specified vertex '{v}' was not in the graph.");
             foreach ((TVertex pointed, TEdgeWeight _) in neighbours) Disconnect(v, pointed);
             foreach (TVertex pointing in mapping.Keys) Disconnect(pointing, v);
             mapping.Remove(v);
@@ -92,9 +92,9 @@
         public void Connect(TVertex v1, TVertex v2, bool orientedEdge, TEdgeWeight edgeWeight)
         {
             if (!mapping.TryGetValue(v1, out var dict1)) throw new InvalidOperationException(
-                $"Connect() failed. Specified vertex '{v1}' was not in the graph.");
+                $"Specified vertex '{v1}' was not in the graph.");
             if (!mapping.TryGetValue(v2, out var dict2)) throw new InvalidOperationException(
-                $"Connect() failed. Specified vertex '{v2}' was not in the graph.");
+                $"Specified vertex '{v2}' was not in the graph.");
             Connect(v1, v2, dict1, dict2, orientedEdge, edgeWeight);
         }
         public bool TryConnect(TVertex v1, TVertex v2, bool orientedEdge, TEdgeWeight edgeWeight)
@@ -107,9 +107,9 @@
         public void Disconnect(TVertex v1, TVertex v2)
         {
             if (!mapping.TryGetValue(v1, out var dict1)) throw new InvalidOperationException(
-                $"Disconnect() was impossible. Specified vertex '{v1}' was not in the graph.");
+                $"Specified vertex '{v1}' was not in the graph.");
             if (!mapping.TryGetValue(v2, out var dict2)) throw new InvalidOperationException(
-                $"Disconnect() was impossible. Specified vertex '{v2}' was not in the graph.");
+                $"Specified vertex '{v2}' was not in the graph.");
             if (dict1.Remove(v2) | dict2.Remove(v1)) --EdgeCount;
         }
         public bool TryDisconnect(TVertex v1, TVertex v2)

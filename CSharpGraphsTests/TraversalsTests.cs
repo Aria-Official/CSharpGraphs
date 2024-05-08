@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace CSharpGraphsTests
 {
     [TestFixture]
-    public class GraphTraversalsTests
+    public class TraversalsTests
     {
         [Test]
         public void DFT1()
@@ -18,7 +18,7 @@ namespace CSharpGraphsTests
             graph.Connect(5, 6, true);
             graph.Connect(6, 7, true);
             graph.Connect(7, 5, false);
-            IEnumerable<int> dft = GraphAlgorithms.DepthFirstTraversal(graph, 1);
+            IEnumerable<int> dft = Traversals.DepthFirstTraversal(graph, 1);
             Assert.That(string.Join(string.Empty, dft) == "12345678");
         }
         [Test]
@@ -35,14 +35,14 @@ namespace CSharpGraphsTests
             graph.Connect(8, 9, true);
             graph.Connect(7, 0, true);
             graph.Connect(9, 0, false);
-            IEnumerable<int> dft = GraphAlgorithms.DepthFirstTraversal(graph, 1);
+            IEnumerable<int> dft = Traversals.DepthFirstTraversal(graph, 1);
             Assert.That(string.Join(string.Empty, dft) == "164520978");
         }
         [Test]
         public void DFT3()
         {
             var graph = Graph<int>.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-            IEnumerable<int> dft = GraphAlgorithms.DepthFirstTraversal(graph, 1);
+            IEnumerable<int> dft = Traversals.DepthFirstTraversal(graph, 1);
             Assert.That(string.Join(string.Empty, dft) == "1023456789");
         }
         [Test]
@@ -57,14 +57,14 @@ namespace CSharpGraphsTests
             graph.Connect(3, 7, true);
             graph.Connect(3, 8, false);
             graph.Connect(9, 0, true);
-            IEnumerable<int> dft = GraphAlgorithms.BreadthFirstTraversal(graph, 1);
+            IEnumerable<int> dft = Traversals.BreadthFirstTraversal(graph, 1);
             Assert.That(string.Join(string.Empty, dft) == "1234567890");
         }
         [Test]
         public void BFT2()
         {
             var graph = Graph<int>.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-            IEnumerable<int> dft = GraphAlgorithms.BreadthFirstTraversal(graph, 1);
+            IEnumerable<int> dft = Traversals.BreadthFirstTraversal(graph, 1);
             Assert.That(string.Join(string.Empty, dft) == "1023456789");
         }
     }
