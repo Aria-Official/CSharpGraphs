@@ -1,8 +1,8 @@
 ﻿namespace CSharpGraphsLibrary
 {
-    public static class GraphAlgorithms
+    public static class Traversals
     {
-        public static IEnumerable<T> DepthFirstTraversal<T>(Graph<T> graph, T start) where T : notnull
+        public static IEnumerable<T> DepthFirstTraversal<T>(ITraversableGraph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
             if (graph.VertexCount == 0) throw new InvalidOperationException($"Specified graph '{graph}' had no vertices.");
@@ -23,7 +23,7 @@
                 }
             }
         }
-        public static IEnumerable<T> BreadthFirstTraversal<T>(Graph<T> graph, T start) where T : notnull
+        public static IEnumerable<T> BreadthFirstTraversal<T>(ITraversableGraph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
             if (graph.VertexCount == 0) throw new InvalidOperationException($"Specified graph '{graph}' had no vertices.");
@@ -51,6 +51,5 @@
                 }
             }
         }
-        
     }
 }

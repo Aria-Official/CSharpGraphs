@@ -6,6 +6,21 @@ namespace CSharpGraphsTests
     public class TraversalsTests
     {
         [Test]
+        public void DFTThrowsOnNullGraph()
+        {
+            Assert.Throws<ArgumentNullException>(() => { var dft = Traversals.DepthFirstTraversal<int>(null!, 0); });
+        }
+        [Test]
+        public void DFTThrowsOnEmptyGraph()
+        {
+            Assert.Throws<InvalidOperationException>(() => { var dft = Traversals.DepthFirstTraversal<char>(Graph<char>.Create(), 'A'); });
+        }
+        [Test]
+        public void DFTThrowsOnMissingStart()
+        {
+            Assert.Throws<InvalidOperationException>(() => { var dft = Traversals.DepthFirstTraversal<double>(Graph<double>.Create(.0), .1); });
+        }
+        [Test]
         public void DFT1()
         {
             var graph = Graph<int>.Create(1, 2, 3, 4, 5, 6, 7, 8);
@@ -44,6 +59,23 @@ namespace CSharpGraphsTests
             var graph = Graph<int>.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
             IEnumerable<int> dft = Traversals.DepthFirstTraversal(graph, 1);
             Assert.That(string.Join(string.Empty, dft) == "1023456789");
+        }
+        [Test]
+        public void BFTThrowsOnNullGraph()
+        {
+            Assert.Throws<ArgumentNullException>(() => { var bft = Traversals.BreadthFirstTraversal<int>(null!, 0); });
+        }
+        [Test]
+        public void BFTThrowsOnEmptyGraph()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            { var bft = Traversals.BreadthFirstTraversal<char>(WeightedGraph<char, int>.Create(), 'A'); });
+        }
+        [Test]
+        public void BFTThrowsOnMissingStart()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            { var bft = Traversals.BreadthFirstTraversal<int>(WeightedGraph<int, int>.Create(), 0); });
         }
         [Test]
         public void BFT1()

@@ -1,6 +1,6 @@
 ﻿namespace CSharpGraphsLibrary
 {
-    public class Graph<T> where T : notnull
+    public class Graph<T> : ITraversableGraph<T> where T : notnull
     {
         readonly Dictionary<T, HashSet<T>> mapping;
         public int VertexCount => mapping.Keys.Count;
@@ -136,5 +136,7 @@
             }
             return edges;
         }
+        IEnumerable<T>? ITraversableGraph<T>.Vertices() => Vertices();
+        IEnumerable<T>? ITraversableGraph<T>.NeighboursOf(T vertex) => NeighboursOf(vertex);
     }
 }

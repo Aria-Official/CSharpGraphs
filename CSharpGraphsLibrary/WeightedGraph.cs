@@ -1,6 +1,6 @@
 ﻿namespace CSharpGraphsLibrary
 {
-    public class WeightedGraph<TVertex, TEdgeWeight> where TVertex : notnull
+    public class WeightedGraph<TVertex, TEdgeWeight> : ITraversableGraph<TVertex> where TVertex : notnull
     {
         readonly Dictionary<TVertex, Dictionary<TVertex, TEdgeWeight>> mapping;
         public int VertexCount => mapping.Keys.Count;
@@ -125,7 +125,6 @@
             if (orientedEdge) return dict1.ContainsKey(v2);
             return dict1.ContainsKey(v2) & dict2.ContainsKey(v1);
         }
-
         public bool HasEdge(TVertex v1, TVertex v2, bool orientedEdge, out TEdgeWeight? edgeWeight)
         {
             if (!mapping.TryGetValue(v1, out var dict1) || !mapping.TryGetValue(v2, out var dict2))
@@ -169,5 +168,6 @@
             }
             return edges;
         }
+        IEnumerable<TVertex>? ITraversableGraph<TVertex>.Vertices() => Vertices();
     }
 }
