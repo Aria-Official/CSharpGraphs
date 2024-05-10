@@ -137,6 +137,7 @@
         public static int ShortestPathLength<T>(Graph<T> graph, T start, T destination) where T : notnull
         {
             GraphExceptionCheck2(graph, start, destination);
+            if (EqualityComparer<T>.Default.Equals(start, destination)) return 0;
             Dictionary<T, int> pathLengths = new() { { start, 0 } };
             HashSet<T> visited = new() { start }, front = new();
             OpenVertex(start);
@@ -164,8 +165,6 @@
                 visited.Add(closestVertex);
                 OpenVertex(closestVertex);
             }
-            bool reachable = pathLengths.TryGetValue(destination, out int pathLength);
-            if (reachable) return pathLength;
             return -1;
             void OpenVertex(T vertex)
             {
@@ -182,9 +181,10 @@
                 }
             }
         }
-        public static List<T>? ShortestPath<T>(Graph<T> graph, T start, T destination) where T : notnull
+        public static (int PathLength, List<T>? Path) ShortestPathAndPathLength<T>(Graph<T> graph, T start, T destination) where T : notnull
         {
             GraphExceptionCheck2(graph, start, destination);
+            if (EqualityComparer<T>.Default.Equals(start, destination)) return (0, null);
             Dictionary<T, T> prevsInPath = new();
             Dictionary<T, int> pathLengths = new() { { start, 0 } };
             HashSet<T> visited = new() { start }, front = new();
@@ -208,14 +208,13 @@
                         closestVertex = vertex;
                     }
                 }
-                if (EqualityComparer<T>.Default.Equals(closestVertex, destination)) return PrivateBuildPath(prevsInPath, destination);
+                if (EqualityComparer<T>.Default.Equals(closestVertex, destination))
+                    return (lowestDistance, PrivateBuildPath(prevsInPath, destination));
                 front.Remove(closestVertex);
                 visited.Add(closestVertex);
                 OpenVertex(closestVertex);
             }
-            bool reachable = pathLengths.ContainsKey(destination);
-            if (reachable) return PrivateBuildPath(prevsInPath, destination);
-            return null;
+            return (-1, null);
             void OpenVertex(T vertex)
             {
                 foreach (T neighbour in graph.NeighboursOf(vertex)!)
@@ -239,6 +238,8 @@
                 }
             }
         }
+        public static List<T>? ShortestPath<T>(Graph<T> graph, T start, T destination) where T : notnull =>
+            ShortestPathAndPathLength(graph, start, destination).Path;
         public static Dictionary<TVertex, TEdgeWeight> ShortestPathLengths<TVertex, TEdgeWeight>(
             WeightedGraph<TVertex, TEdgeWeight> graph,
             TVertex start,

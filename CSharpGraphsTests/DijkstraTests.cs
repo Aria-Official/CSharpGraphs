@@ -148,6 +148,50 @@ namespace CSharpGraphsTests
             Assert.That(Dijkstra.ShortestPathLength(graph, 0, 1) == -1);
         }
         [Test]
+        public void ShortestPathLengthForGraphWhenStartIsDestination()
+        {
+            var graph = Graph<int>.Create(0);
+            Assert.That(Dijkstra.ShortestPathLength(graph, 0, 0) == 0);
+        }
+        [Test]
+        public void ShortestPathAndPathLengthForGraphWhenReachable()
+        {
+            var graph = Graph<int>.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            graph.Connect(1, 2, false);
+            graph.Connect(1, 3, false);
+            graph.Connect(1, 6, false);
+            graph.Connect(2, 5, false);
+            graph.Connect(3, 4, false);
+            graph.Connect(5, 7, false);
+            graph.Connect(6, 8, false);
+            graph.Connect(4, 0, false);
+            graph.Connect(7, 0, false);
+            graph.Connect(8, 0, false);
+            graph.Connect(9, 0, false);
+            var pair = Dijkstra.ShortestPathAndPathLength(graph, 1, 0);
+            List<int> path = pair.Path!;
+            Assert.That(pair.PathLength == 3 &&
+                        path.Count == 4 &&
+                        path[0] == 1 &&
+                        path[1] == 3 &&
+                        path[2] == 4 &&
+                        path[3] == 0);
+        }
+        [Test]
+        public void ShortestPathAndPathLengthForGraphWhenNotReachable()
+        {
+            var graph = Graph<int>.Create(0, 1);
+            var pair = Dijkstra.ShortestPathAndPathLength(graph, 0, 1);
+            Assert.That(pair.Path is null && pair.PathLength == -1);
+        }
+        [Test]
+        public void ShortestPathAndPathLengthForGraphWhenStartIsDestination()
+        {
+            var graph = Graph<int>.Create(0);
+            var pair = Dijkstra.ShortestPathAndPathLength(graph, 0, 0);
+            Assert.That(pair.Path is null && pair.PathLength == 0);
+        }
+        [Test]
         public void ShortestPathForGraphWhenReachable()
         {
             var graph = Graph<int>.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -174,6 +218,12 @@ namespace CSharpGraphsTests
         {
             var graph = Graph<int>.Create(0, 1);
             Assert.That(Dijkstra.ShortestPath(graph, 0, 1) is null);
+        }
+        [Test]
+        public void ShortestPathForGraphWhenStartIsDestination()
+        {
+            var graph = Graph<int>.Create(0);
+            Assert.That(Dijkstra.ShortestPath(graph, 0, 0) is null);
         }
         [Test]
         public void WeightedGraphExceptionsCheckThrowsOnNullGraph()
