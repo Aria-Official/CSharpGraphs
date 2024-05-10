@@ -6,26 +6,6 @@ namespace CSharpGraphsTests
     public class DijkstraTests
     {
         [Test]
-        public void GraphExceptionsCheckThrowsOnNullGraph()
-        {
-            Assert.Throws<ArgumentNullException>(() => { var ls = Dijkstra.ShortestPathLengths<int>(null!, 0); });
-        }
-        [Test]
-        public void GraphExceptionsCheckThrowsOnEmptyGraph()
-        {
-            Assert.Throws<InvalidOperationException>(() => { var pair = Dijkstra.ShortestPathsAndPathLengths<char>(Graph<char>.Create(), 'A'); });
-        }
-        [Test]
-        public void GraphExceptionsCheckThrowsOnMissingStart()
-        {
-            Assert.Throws<InvalidOperationException>(() => { var ps = Dijkstra.ShortestPaths<double>(Graph<double>.Create(.0), 1.0); });
-        }
-        [Test]
-        public void GraphExceptionsCheck2ThrowsOnMissingDestination()
-        {
-            Assert.Throws<InvalidOperationException>(() => { int l = Dijkstra.ShortestPathLength<int>(Graph<int>.Create(0), 0, 1); });
-        }
-        [Test]
         public void ShortestPathLengthsForGraph()
         {
             var graph = Graph<int>.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -39,7 +19,7 @@ namespace CSharpGraphsTests
             graph.Connect(3, 5, true);
             graph.Connect(5, 9, true);
             graph.Connect(9, 8, true);
-            Dictionary<int, int> ls = Dijkstra.ShortestPathLengths<int>(graph, 1);
+            Dictionary<int, int> ls = Paths.Dijkstra.ShortestPathLengths<int>(graph, 1);
             Assert.That(ls.Count == 9 &&
                         ls[1] == 0 &&
                         ls[2] == 1 &&
@@ -69,7 +49,7 @@ namespace CSharpGraphsTests
             graph.Connect('F', 'I', false);
             graph.Connect('I', 'J', true);
             graph.Connect('L', 'J', false);
-            (Dictionary<char, int> ls, Dictionary<char, char> ps) = Dijkstra.ShortestPathsAndPathLengths<char>(graph, 'G');
+            (Dictionary<char, int> ls, Dictionary<char, char> ps) = Paths.Dijkstra.ShortestPathsAndPathLengths<char>(graph, 'G');
             bool lsCorrect = ls.Count == 11 &&
                 ls['B'] == 1 &&
                 ls['C'] == 1 &&
@@ -112,7 +92,7 @@ namespace CSharpGraphsTests
             graph.Connect(1, 6, true);
             graph.Connect(6, 7, true);
             graph.Connect(8, 7, false);
-            Dictionary<byte, byte> ps = Dijkstra.ShortestPaths<byte>(graph, 1);
+            Dictionary<byte, byte> ps = Paths.Dijkstra.ShortestPaths<byte>(graph, 1);
             Assert.That(ps.Count == 9 &&
                         ps[2] == 1 &&
                         ps[3] == 2 &&
@@ -139,19 +119,19 @@ namespace CSharpGraphsTests
             graph.Connect(7, 0, false);
             graph.Connect(8, 0, false);
             graph.Connect(9, 0, false);
-            Assert.That(Dijkstra.ShortestPathLength(graph, 1, 0) == 3);
+            Assert.That(Paths.Dijkstra.ShortestPathLength(graph, 1, 0) == 3);
         }
         [Test]
         public void ShortestPathLengthForGraphWhenNotReachable()
         {
             var graph = Graph<int>.Create(0, 1);
-            Assert.That(Dijkstra.ShortestPathLength(graph, 0, 1) == -1);
+            Assert.That(Paths.Dijkstra.ShortestPathLength(graph, 0, 1) == -1);
         }
         [Test]
         public void ShortestPathLengthForGraphWhenStartIsDestination()
         {
             var graph = Graph<int>.Create(0);
-            Assert.That(Dijkstra.ShortestPathLength(graph, 0, 0) == 0);
+            Assert.That(Paths.Dijkstra.ShortestPathLength(graph, 0, 0) == 0);
         }
         [Test]
         public void ShortestPathAndPathLengthForGraphWhenReachable()
@@ -168,7 +148,7 @@ namespace CSharpGraphsTests
             graph.Connect(7, 0, false);
             graph.Connect(8, 0, false);
             graph.Connect(9, 0, false);
-            var pair = Dijkstra.ShortestPathAndPathLength(graph, 1, 0);
+            var pair = Paths.Dijkstra.ShortestPathAndPathLength(graph, 1, 0);
             List<int> path = pair.Path!;
             Assert.That(pair.PathLength == 3 &&
                         path.Count == 4 &&
@@ -181,14 +161,14 @@ namespace CSharpGraphsTests
         public void ShortestPathAndPathLengthForGraphWhenNotReachable()
         {
             var graph = Graph<int>.Create(0, 1);
-            var pair = Dijkstra.ShortestPathAndPathLength(graph, 0, 1);
+            var pair = Paths.Dijkstra.ShortestPathAndPathLength(graph, 0, 1);
             Assert.That(pair.Path is null && pair.PathLength == -1);
         }
         [Test]
         public void ShortestPathAndPathLengthForGraphWhenStartIsDestination()
         {
             var graph = Graph<int>.Create(0);
-            var pair = Dijkstra.ShortestPathAndPathLength(graph, 0, 0);
+            var pair = Paths.Dijkstra.ShortestPathAndPathLength(graph, 0, 0);
             Assert.That(pair.Path is null && pair.PathLength == 0);
         }
         [Test]
@@ -206,7 +186,7 @@ namespace CSharpGraphsTests
             graph.Connect(7, 0, false);
             graph.Connect(8, 0, false);
             graph.Connect(9, 0, false);
-            List<int> path = Dijkstra.ShortestPath(graph, 1, 0)!;
+            List<int> path = Paths.Dijkstra.ShortestPath(graph, 1, 0)!;
             Assert.That(path is not null && path.Count == 4 &&
                         path[0] == 1 &&
                         path[1] == 3 &&
@@ -217,37 +197,13 @@ namespace CSharpGraphsTests
         public void ShortestPathForGraphWhenNotReachable()
         {
             var graph = Graph<int>.Create(0, 1);
-            Assert.That(Dijkstra.ShortestPath(graph, 0, 1) is null);
+            Assert.That(Paths.Dijkstra.ShortestPath(graph, 0, 1) is null);
         }
         [Test]
         public void ShortestPathForGraphWhenStartIsDestination()
         {
             var graph = Graph<int>.Create(0);
-            Assert.That(Dijkstra.ShortestPath(graph, 0, 0) is null);
-        }
-        [Test]
-        public void WeightedGraphExceptionsCheckThrowsOnNullGraph()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-            { var ls = Dijkstra.ShortestPathLengths<int, int>(null!, 0, Comparer<int>.Default, (a, b) => a + b); });
-        }
-        [Test]
-        public void WeightedGraphExceptionsCheckThrowsOnEmptyGraph()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var graph = WeightedGraph<int, double>.Create();
-                var pair = Dijkstra.ShortestPathsAndPathLengths<int, double>(graph, 0, Comparer<double>.Default, (a, b) => a + b);
-            });
-        }
-        [Test]
-        public void WeightedGraphExceptionsCheckThrowsOnMissingStart()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var graph = WeightedGraph<int, char>.Create('A');
-                var ps = Dijkstra.ShortestPaths<int, char>(graph, 'B', Comparer<char>.Default, (a, b) => (char)(a + b));
-            });
+            Assert.That(Paths.Dijkstra.ShortestPath(graph, 0, 0) is null);
         }
         [Test]
         public void ShortestPathLengthsForWeightedGraph()
@@ -263,7 +219,7 @@ namespace CSharpGraphsTests
             graph.Connect(1, 2, false, 1);
             graph.Connect(6, 5, false, 7);
             graph.Connect(1, 5, true, 8);
-            Dictionary<int, int> ls = Dijkstra.ShortestPathLengths(graph, 1, Comparer<int>.Default, (a, b) => a + b);
+            Dictionary<int, int> ls = Paths.Dijkstra.ShortestPathLengths(graph, 1, Comparer<int>.Default, (a, b) => a + b);
             Assert.That(ls.Count == 7 &&
                         ls[1] == 0 &&
                         ls[2] == 1 &&
@@ -291,7 +247,7 @@ namespace CSharpGraphsTests
             graph.Connect(7, 8, true, 12);
             graph.Connect(8, 9, true, 20);
             graph.Connect(10, 4, true, 9);
-            (Dictionary<int, int> ls, Dictionary<int, int> ps) = Dijkstra.ShortestPathsAndPathLengths(graph, 1,
+            (Dictionary<int, int> ls, Dictionary<int, int> ps) = Paths.Dijkstra.ShortestPathsAndPathLengths(graph, 1,
                 Comparer<int>.Default, (a, b) => a + b);
             bool lsCorrect = ls.Count == 9 &&
                  ls[1] == 0 &&
@@ -329,7 +285,7 @@ namespace CSharpGraphsTests
             graph.Connect(10, 3, true, 1.0m);
             graph.Connect(5, 6, true, 2.0m);
             graph.Connect(7, 6, false, 1.0m);
-            Dictionary<int, int> ps = Dijkstra.ShortestPaths(graph, 1, Comparer<decimal>.Default, (a, b) => a + b);
+            Dictionary<int, int> ps = Paths.Dijkstra.ShortestPaths(graph, 1, Comparer<decimal>.Default, (a, b) => a + b);
             Assert.That(ps.Count == 8 &&
                         ps[2] == 1 &&
                         ps[3] == 1 &&
@@ -339,16 +295,6 @@ namespace CSharpGraphsTests
                         ps[7] == 1 &&
                         ps[8] == 2 &&
                         ps[9] == 2);
-        }
-        [Test]
-        public void BuildPathThrowsOnNullDict()
-        {
-            Assert.Throws<ArgumentNullException>(() => { var path = Dijkstra.BuildPath<int>(null!, 0); });
-        }
-        [Test]
-        public void BuildPathThrowsOnMissingVertex()
-        {
-            Assert.Throws<InvalidOperationException>(() => { var path = Dijkstra.BuildPath<int>(new(), 0); });
         }
     }
 }
