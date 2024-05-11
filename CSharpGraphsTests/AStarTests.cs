@@ -28,7 +28,13 @@ namespace CSharpGraphsTests
             graph.Connect(p0, p6, true, 10);
             graph.Connect(p6, p7, false, 11);
             int l = Paths.AStar.ShortestPathLength(graph, p0, p7,
-                Comparer<int>.Default, (a, b) => a + b,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b,
                 (p1, p2) => (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2)));
             Assert.That(l == 21);
         }
@@ -39,7 +45,13 @@ namespace CSharpGraphsTests
                   p1 = new(1, 1);
             var graph = WeightedGraph<Point, double>.Create(p0, p1);
             double l = Paths.AStar.ShortestPathLength(graph, p0, p1,
-                Comparer<double>.Default, (a, b) => a + b,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b,
                 (p1, p2) => (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2)));
             Assert.That(l == 0);
         }
@@ -49,7 +61,13 @@ namespace CSharpGraphsTests
             Point p0 = new(0, 0);
             var graph = WeightedGraph<Point, int>.Create(p0);
             int l = Paths.AStar.ShortestPathLength(graph, p0, p0,
-                Comparer<int>.Default, (a, b) => a + b,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b,
                 (p1, p2) => (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2)));
             Assert.That(l == 0);
         }
@@ -75,7 +93,13 @@ namespace CSharpGraphsTests
             graph.Connect(p0, p6, true, 10);
             graph.Connect(p6, p7, false, 11);
             List<Point> p = Paths.AStar.ShortestPath(graph, p0, p7,
-                Comparer<int>.Default, (a, b) => a + b,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b,
                 (p1, p2) => (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2)))!;
             Assert.That(p.Count == 3 &&
                         p[0] == p0 &&
@@ -89,7 +113,13 @@ namespace CSharpGraphsTests
                   p1 = new(1, 1);
             var graph = WeightedGraph<Point, double>.Create(p0, p1);
             List<Point>? p = Paths.AStar.ShortestPath(graph, p0, p1,
-                Comparer<double>.Default, (a, b) => a + b,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b,
                 (p1, p2) => (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2)));
             Assert.That(p is null);
         }
@@ -99,7 +129,13 @@ namespace CSharpGraphsTests
             Point p0 = new(0, 0);
             var graph = WeightedGraph<Point, double>.Create(p0);
             List<Point>? p = Paths.AStar.ShortestPath(graph, p0, p0,
-                Comparer<double>.Default, (a, b) => a + b,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b,
                 (p1, p2) => (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2)));
             Assert.That(p is null);
         }

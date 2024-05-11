@@ -5,8 +5,6 @@
         static void GraphExceptionCheck<T>(Graph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
-            if (graph.VertexCount == 0) throw new InvalidOperationException(
-                $"Specified graph '{graph}' had no vertices.");
             if (!graph.HasVertex(start)) throw new InvalidOperationException(
                 $"Specified vertex '{start}' was not in the graph.");
         }
@@ -18,30 +16,28 @@
         }
         static void WeightedGraphExceptionCheck<TVertex, TEdgeWeight>(
             WeightedGraph<TVertex, TEdgeWeight> graph, TVertex start,
-            IComparer<TEdgeWeight> comparer,
+            Comparison<TEdgeWeight> comparison,
             Func<TEdgeWeight, TEdgeWeight, TEdgeWeight> edgeWeightAddFunction)
             where TVertex : notnull
         {
             if (graph is null) throw new ArgumentNullException(
                 $"Specified graph '{graph}' was null.");
-            if (comparer is null) throw new ArgumentNullException(
-                $"Specified comparer '{comparer}' was null.");
+            if (comparison is null) throw new ArgumentNullException(
+                $"Specified edge weight comparison function '{comparison}' was null.");
             if (edgeWeightAddFunction is null) throw new ArgumentNullException(
                 $"Specified edge weight add function '{edgeWeightAddFunction}' was null.");
-            if (graph.VertexCount == 0) throw new InvalidOperationException(
-                $"Specified graph '{graph}' had no vertices.");
             if (!graph.HasVertex(start)) throw new InvalidOperationException(
                 $"Specified vertex '{start}' was not in the graph.");
         }
         static void WeightedGraphExceptionCheck2<TVertex, TEdgeWeight>(
             WeightedGraph<TVertex, TEdgeWeight> graph,
             TVertex start, TVertex destination,
-            IComparer<TEdgeWeight> comparer,
+            Comparison<TEdgeWeight> comparison,
             Func<TEdgeWeight, TEdgeWeight, TEdgeWeight> edgeWeightAddFunction,
             Func<TVertex, TVertex, TEdgeWeight> heuristic)
             where TVertex : notnull
         {
-            WeightedGraphExceptionCheck(graph, start, comparer, edgeWeightAddFunction);
+            WeightedGraphExceptionCheck(graph, start, comparison, edgeWeightAddFunction);
             if (!graph.HasVertex(destination)) throw new InvalidOperationException(
                 $"Specified vertex '{destination}' was not in the graph.");
             if (heuristic is null) throw new ArgumentNullException(

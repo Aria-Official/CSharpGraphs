@@ -219,7 +219,14 @@ namespace CSharpGraphsTests
             graph.Connect(1, 2, false, 1);
             graph.Connect(6, 5, false, 7);
             graph.Connect(1, 5, true, 8);
-            Dictionary<int, int> ls = Paths.Dijkstra.ShortestPathLengths(graph, 1, Comparer<int>.Default, (a, b) => a + b);
+            Dictionary<int, int> ls = Paths.Dijkstra.ShortestPathLengths(graph, 1,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b);
             Assert.That(ls.Count == 7 &&
                         ls[1] == 0 &&
                         ls[2] == 1 &&
@@ -248,7 +255,13 @@ namespace CSharpGraphsTests
             graph.Connect(8, 9, true, 20);
             graph.Connect(10, 4, true, 9);
             (Dictionary<int, int> ls, Dictionary<int, int> ps) = Paths.Dijkstra.ShortestPathsAndPathLengths(graph, 1,
-                Comparer<int>.Default, (a, b) => a + b);
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b);
             bool lsCorrect = ls.Count == 9 &&
                  ls[1] == 0 &&
                  ls[2] == 10 &&
@@ -285,7 +298,14 @@ namespace CSharpGraphsTests
             graph.Connect(10, 3, true, 1.0m);
             graph.Connect(5, 6, true, 2.0m);
             graph.Connect(7, 6, false, 1.0m);
-            Dictionary<int, int> ps = Paths.Dijkstra.ShortestPaths(graph, 1, Comparer<decimal>.Default, (a, b) => a + b);
+            Dictionary<int, int> ps = Paths.Dijkstra.ShortestPaths(graph, 1,
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b);
             Assert.That(ps.Count == 8 &&
                         ps[2] == 1 &&
                         ps[3] == 1 &&

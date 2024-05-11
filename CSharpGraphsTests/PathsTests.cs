@@ -11,12 +11,6 @@ namespace CSharpGraphsTests
             { var ls = Paths.Dijkstra.ShortestPathLengths<int>(null!, 0); });
         }
         [Test]
-        public void GraphExceptionCheckThrowsOnEmptyGraph()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-            { var pair = Paths.Dijkstra.ShortestPathsAndPathLengths<char>(Graph<char>.Create(), 'A'); });
-        }
-        [Test]
         public void GraphExceptionCheckThrowsOnMissingStart()
         {
             Assert.Throws<InvalidOperationException>(() =>
@@ -33,10 +27,17 @@ namespace CSharpGraphsTests
         {
             Assert.Throws<ArgumentNullException>(() =>
             { var ls = Paths.Dijkstra.ShortestPathLengths<int, int>(null!, 0,
-                Comparer<int>.Default, (a, b) => a + b); });
+                (a, b) =>
+                {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                },
+                (a, b) => a + b);
+            });
         }
         [Test]
-        public void WeightedGraphExceptionCheckThrowsOnNullComparer()
+        public void WeightedGraphExceptionCheckThrowsOnNullComparison()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -52,17 +53,13 @@ namespace CSharpGraphsTests
             {
                 var graph = WeightedGraph<int, int>.Create(0, 1);
                 var pair = Paths.Dijkstra.ShortestPathsAndPathLengths<int, int>(graph, 0,
-                    Comparer<int>.Default, null!);
-            });
-        }
-        [Test]
-        public void WeightedGraphExceptionCheckThrowsOnEmptyGraph()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var graph = WeightedGraph<int, double>.Create();
-                var pair = Paths.Dijkstra.ShortestPathsAndPathLengths<int, double>(graph, 0,
-                    Comparer<double>.Default, (a, b) => a + b);
+                    (a, b) =>
+                    {
+                        if (a > b) return 1;
+                        if (a < b) return -1;
+                        return 0;
+                    },
+                    null!);
             });
         }
         [Test]
@@ -72,7 +69,13 @@ namespace CSharpGraphsTests
             {
                 var graph = WeightedGraph<int, char>.Create(0);
                 var ps = Paths.Dijkstra.ShortestPaths<int, char>(graph, 1,
-                    Comparer<char>.Default, (a, b) => (char)(a + b));
+                    (a, b) =>
+                    {
+                        if (a > b) return 1;
+                        if (a < b) return -1;
+                        return 0;
+                    },
+                    (a, b) => (char)(a + b));
             });
         }
         [Test]
@@ -82,7 +85,13 @@ namespace CSharpGraphsTests
             {
                 var graph = WeightedGraph<int, int>.Create(0, 1);
                 var pair = Paths.AStar.ShortestPathAndPathLength(graph, 0, 1,
-                    Comparer<int>.Default, (a, b) => a + b, null!);
+                    (a, b) =>
+                    {
+                        if (a > b) return 1;
+                        if (a < b) return -1;
+                        return 0;
+                    },
+                    (a, b) => a + b, null!);
             });
         }
         [Test]

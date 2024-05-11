@@ -214,10 +214,10 @@
             public static Dictionary<TVertex, TEdgeWeight> ShortestPathLengths<TVertex, TEdgeWeight>(
                 WeightedGraph<TVertex, TEdgeWeight> graph,
                 TVertex start,
-                IComparer<TEdgeWeight> comparer,
+                Comparison<TEdgeWeight> comparison,
                 Func<TEdgeWeight, TEdgeWeight, TEdgeWeight> edgeWeightAddFunction) where TVertex : notnull
             {
-                WeightedGraphExceptionCheck(graph, start, comparer, edgeWeightAddFunction);
+                WeightedGraphExceptionCheck(graph, start, comparison, edgeWeightAddFunction);
                 Dictionary<TVertex, TEdgeWeight> pathLengths = new() { { start, default! } };
                 HashSet<TVertex> visited = new() { start }, front = new();
                 OpenVertex(start);
@@ -234,7 +234,7 @@
                     foreach (TVertex vertex in front) // Designed to get the reference to actual closest vertex to pop it from front.
                     {
                         TEdgeWeight distance = pathLengths[vertex];
-                        if (comparer.Compare(distance, lowestDistance) < 0)
+                        if (comparison(distance, lowestDistance) < 0)
                         {
                             lowestDistance = distance;
                             closestVertex = vertex;
@@ -253,7 +253,7 @@
                         TEdgeWeight newpath = edgeWeightAddFunction(pathLengths[vertex], weight);
                         if (anyPath)
                         {
-                            if (comparer.Compare(newpath, path) < 0) pathLengths[neighbour] = newpath;
+                            if (comparison(newpath, path!) < 0) pathLengths[neighbour] = newpath;
                         }
                         else pathLengths.Add(neighbour, newpath);
                         if (!visited.Contains(neighbour) && !front.Contains(neighbour)) front.Add(neighbour);
@@ -264,10 +264,10 @@
                 ShortestPathsAndPathLengths<TVertex, TEdgeWeight>(
                 WeightedGraph<TVertex, TEdgeWeight> graph,
                 TVertex start,
-                IComparer<TEdgeWeight> comparer,
+                Comparison<TEdgeWeight> comparison,
                 Func<TEdgeWeight, TEdgeWeight, TEdgeWeight> edgeWeightAddFunction) where TVertex : notnull
             {
-                WeightedGraphExceptionCheck(graph, start, comparer, edgeWeightAddFunction);
+                WeightedGraphExceptionCheck(graph, start, comparison, edgeWeightAddFunction);
                 Dictionary<TVertex, TVertex> prevsInPath = new();
                 Dictionary<TVertex, TEdgeWeight> pathLengths = new() { { start, default! } };
                 HashSet<TVertex> visited = new() { start }, front = new();
@@ -285,7 +285,7 @@
                     foreach (TVertex vertex in front) // Designed to get the reference to actual closest vertex to pop it from front.
                     {
                         TEdgeWeight distance = pathLengths[vertex];
-                        if (comparer.Compare(distance, lowestDistance) < 0)
+                        if (comparison(distance, lowestDistance) < 0)
                         {
                             lowestDistance = distance;
                             closestVertex = vertex;
@@ -304,7 +304,7 @@
                         TEdgeWeight newpath = edgeWeightAddFunction(pathLengths[vertex], weight);
                         if (anyPath)
                         {
-                            if (comparer.Compare(newpath, path) < 0)
+                            if (comparison(newpath, path!) < 0)
                             {
                                 pathLengths[neighbour] = newpath;
                                 prevsInPath[neighbour] = vertex;
@@ -322,9 +322,9 @@
             public static Dictionary<TVertex, TVertex> ShortestPaths<TVertex, TEdgeWeight>
                 (WeightedGraph<TVertex, TEdgeWeight> graph,
                 TVertex start,
-                IComparer<TEdgeWeight> comparer,
+                Comparison<TEdgeWeight> comparison,
                 Func<TEdgeWeight, TEdgeWeight, TEdgeWeight> edgeWeightAddFunction) where TVertex : notnull
-                => ShortestPathsAndPathLengths(graph, start, comparer, edgeWeightAddFunction).Paths;
+                => ShortestPathsAndPathLengths(graph, start, comparison, edgeWeightAddFunction).Paths;
         }
     }
 }
