@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="GraphEditor.Views.GraphOptionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vms="clr-namespace:GraphEditor.VMs"
+             mc:Ignorable="d" 
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vms:GraphOptionsVM}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0"
+                  Header="Vertex actions">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="0" Grid.Column="0"
+                        Content="Add vertex"
+                        VerticalAlignment="Center"
+                        Margin="6" Padding="15 5"
+                        Command="{Binding AddVertexCommand}"/>
+                <Button Grid.Row="1" Grid.Column="0"
+                        Content="Remove vertex"
+                        VerticalAlignment="Center"
+                        Margin="6" Padding="15 5"
+                        Command="{Binding RemoveVertexCommand}"/>
+                <Button Grid.Row="2" Grid.Column="0"
+                        Content="Has vertex?"
+                        VerticalAlignment="Center"
+                        Margin="6" Padding="15 5"
+                        Command="{Binding HasVertexCommand}"/>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         VerticalAlignment="Center"
+                         MinWidth="40"
+                         Padding="5"
+                         Text="{Binding Vertex}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="1"
+                  Header="Edge actions">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="0" Grid.Column="0"
+                        Content="Connect"
+                        VerticalAlignment="Center"
+                        Margin="6" Padding="15 5"
+                        Command="{Binding ConnectCommand}"/>
+                <Button Grid.Row="1" Grid.Column="0"
+                        Content="Disconnect"
+                        VerticalAlignment="Center"
+                        Margin="6" Padding="15 5"
+                        Command="{Binding DisconnectCommand}"/>
+                <Button Grid.Row="2" Grid.Column="0"
+                        Content="Has edge?"
+                        VerticalAlignment="Center"
+                        Margin="6" Padding="15 5"
+                        Command="{Binding HasEdgeCommand}"/>
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0"
+                             VerticalAlignment="Center"
+                             MinWidth="40"
+                             Padding="5"
+                             Margin="0 0 2 0"
+                             Text="{Binding EdgeEnd1}"/>
+                    <TextBox Grid.Column="1"
+                             VerticalAlignment="Center"
+                             MinWidth="40"
+                             Padding="5"
+                             Text="{Binding EdgeEnd2}"/>
+                </Grid>
+                <CheckBox Grid.Row="1" Grid.Column="1"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Content="Oriented?"
+                          IsChecked="{Binding Oriented}"/>
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         VerticalAlignment="Center"
+                         MinWidth="40"
+                         Padding="5"
+                         Text="{Binding Weight}"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>
