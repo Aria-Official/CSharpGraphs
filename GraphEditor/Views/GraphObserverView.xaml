@@ -25,7 +25,8 @@
                    Text="{Binding Edges}"
                    Margin="8 5 0 5"/>
         <ListView Grid.Row="3"
-                  ItemsSource="{Binding GraphDisplay}">
+                  ItemsSource="{Binding GraphDisplay}"
+                  BorderThickness="0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Margin" Value="5 2 5 2"/>

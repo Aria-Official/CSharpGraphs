@@ -8,12 +8,20 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=vms:GraphOptionsVM}">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0"
+        <TextBlock Grid.Row="0"
+                   Text="Graph edit options"
+                   HorizontalAlignment="Center"
+                   Margin="0 5 0 5"/>
+        <GroupBox Grid.Row="1"
                   Header="Vertex actions">
             <Grid>
                 <Grid.RowDefinitions>
@@ -47,7 +55,7 @@
                          Text="{Binding Vertex}"/>
             </Grid>
         </GroupBox>
-        <GroupBox Grid.Row="1"
+        <GroupBox Grid.Row="2"
                   Header="Edge actions">
             <Grid>
                 <Grid.RowDefinitions>
@@ -100,7 +108,8 @@
                          VerticalAlignment="Center"
                          MinWidth="40"
                          Padding="5"
-                         Text="{Binding Weight}"/>
+                         Text="{Binding Weight}"
+                         Visibility="{Binding WeightOptionVisibility, Converter={StaticResource BoolToVisConverter}}"/>
             </Grid>
         </GroupBox>
     </Grid>

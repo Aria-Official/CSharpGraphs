@@ -5,37 +5,73 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vms="clr-namespace:GraphEditor.VMs"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vms:GraphExplorerVM}"
              d:DesignHeight="400"
-             d:DesignWidth="500">
+             d:DesignWidth="500"
+             d:DataContext="{d:DesignInstance Type=vms:GraphExplorerVM}">
     <Grid>
-        <GroupBox Header="Graph explorer">
-            <ListView ItemsSource="{Binding GraphInfos}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name"
-                                        Width="auto"
-                                        DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Saved?"
-                                        Width="auto"
-                                        DisplayMemberBinding="{Binding Saved}"/>
-                        <GridViewColumn Header="Type"
-                                        Width="auto"
-                                        DisplayMemberBinding="{Binding GraphType}"/>
-                    </GridView>
-                </ListView.View>
-                <ListView.Resources>
-                    <ContextMenu x:Key="ItemContexMenu">
-                        <MenuItem Header="Close"/>
-                        <MenuItem Header="Save as"/>
-                    </ContextMenu>
-                </ListView.Resources>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="ContextMenu" Value="{StaticResource ItemContexMenu}"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </GroupBox>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Graph explorer"
+                   Margin="0 3"
+                   HorizontalAlignment="Center"/>
+        <DataGrid ItemsSource="{Binding GraphInfos}"
+                  SelectedItem="{Binding SelectedGraphInfo}"
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  CanUserReorderColumns="False"
+                  CanUserSortColumns="False"
+                  CanUserDeleteRows="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  IsReadOnly="True"
+                  Width="auto"
+                  x:Name="ExplorerDataGrid"
+                  SelectionMode="Single"
+                  GridLinesVisibility="None"
+                  BorderBrush="LightGray">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Graph name"
+                            Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Saved?"
+                            Binding="{Binding Saved}"
+                            MinWidth="50"/>
+                <DataGridTextColumn Header="Type"
+                            Binding="{Binding GraphType}"
+                            MinWidth="70"/>
+            </DataGrid.Columns>
+            <DataGrid.Resources>
+                <ContextMenu x:Key="ItemContexMenu">
+                    <MenuItem Header="Close"/>
+                    <MenuItem Header="Save as"/>
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="False">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource ItemContexMenu}"/>
+                    <Setter Property="Margin" Value="0 0 0 2"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridRow">
+                                <DataGridCellsPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
     </Grid>
 </UserControl>

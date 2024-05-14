@@ -19,12 +19,21 @@
     <Compile Update="Views\MainView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\NewGraphPromptView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Windows\NewGraphPromptWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\GraphExplorerView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\GraphOptionsView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\NewGraphPromptView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Windows\MainWindow.xaml">
@@ -34,6 +43,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\MainView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\NewGraphPromptWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

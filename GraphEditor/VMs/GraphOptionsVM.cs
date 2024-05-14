@@ -1,14 +1,19 @@
-﻿using System;
+﻿using CSharpGraphsLibrary;
+using GraphEditor.Classes;
+using System;
 using System.Windows.Input;
 namespace GraphEditor.VMs
 {
     class GraphOptionsVM : VMBase
     {
+        public Graph<int>? Graph { get; private set; }
+        public WeightedGraph<int, int>? WeightedGraph { get; private set; }
         int vertex,
             edgeEnd1,
             edgeEnd2,
             weight;
         bool oriented;
+        bool weightOptionVisibility;
         public string? Vertex
         {
             get => vertex.ToString();
@@ -54,25 +59,37 @@ namespace GraphEditor.VMs
                 NotifyPropertyChanged(nameof(Oriented));
             }
         }
+        public bool WeightOptionVisibility
+        {
+            get => weightOptionVisibility;
+            set
+            {
+                weightOptionVisibility = value;
+                NotifyPropertyChanged(nameof(WeightOptionVisibility));
+            }
+        }
         public ICommand AddVertexCommand { get; }
         public ICommand RemoveVertexCommand { get; }
         public ICommand HasVertexCommand { get; }
         public ICommand ConnectCommand { get; }
         public ICommand DisconnectCommand { get; }
         public ICommand HasEdgeCommand { get; }
-        public GraphOptionsVM(ICommand addVertexCommand,
-                              ICommand removeVertexCommand,
-                              ICommand hasVertexCommand,
-                              ICommand connectCommand,
-                              ICommand disconnectCommand,
-                              ICommand hasEdgeCommand)
+        public void ReactGraphSet(object? sender, GraphSelectedEventArgs e)
         {
-            AddVertexCommand = addVertexCommand;
-            RemoveVertexCommand = removeVertexCommand;
-            HasVertexCommand = hasVertexCommand;
-            ConnectCommand = connectCommand;
-            DisconnectCommand = disconnectCommand;
-            HasEdgeCommand = hasEdgeCommand;
+            WeightedGraph = null;
+            Graph = e.Graph;
+            WeightOptionVisibility = false;
+            Weight = null;
+        }
+        public void ReactWeightedGraphSet(object? sender, WeightedGraphSelectedEventArgs e)
+        {
+            Graph = null;
+            WeightedGraph = e.WeightedGraph;
+            WeightOptionVisibility = true;
+        }
+        public GraphOptionsVM()
+        {
+
         }
     }
 }

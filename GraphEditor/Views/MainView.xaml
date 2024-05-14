@@ -16,10 +16,8 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="Graph">
-                <MenuItem Header="New">
-                    <MenuItem Header="Unweighted"/>
-                    <MenuItem Header="Weighted"/>
-                </MenuItem>
+                <MenuItem Header="New"
+                          Command="{Binding OpenNewGraphPromptWindowCommand}"/>
                 <MenuItem Header="Open from file"/>
                 <MenuItem Header="Save as file"/>
             </MenuItem>
@@ -38,7 +36,9 @@
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <local:GraphObserverView DataContext="{Binding GraphObserverVM}"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <local:GraphObserverView DataContext="{Binding GraphObserverVM}"/>
+                        </ScrollViewer>
                         <GridSplitter Grid.Column="1"
                                       ResizeDirection="Columns"
                                       Width="6"

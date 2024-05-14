@@ -1,4 +1,4 @@
-﻿using GraphEditor.VMs;
+﻿using GraphEditor.Stores;
 using System.Windows.Controls;
 namespace GraphEditor.Views
 {
@@ -7,7 +7,7 @@ namespace GraphEditor.Views
         public MainView()
         {
             InitializeComponent();
-            DataContext = new MainVM();
+            DataContext = MainVMStore.MainVM;
         }
     }
 }
