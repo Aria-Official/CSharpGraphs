@@ -1,5 +1,6 @@
 ﻿using System;
-namespace GraphEditor.Classes
+
+namespace GraphEditor.Models.CustomEventArgs
 {
     class GraphInfoEventArgs : EventArgs
     {

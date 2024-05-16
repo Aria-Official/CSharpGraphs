@@ -37,7 +37,7 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <local:GraphObserverView DataContext="{Binding GraphObserverVM}"/>
+                            <local:ObserverView DataContext="{Binding ObserverVM}"/>
                         </ScrollViewer>
                         <GridSplitter Grid.Column="1"
                                       ResizeDirection="Columns"
@@ -45,8 +45,8 @@
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Stretch"
                                       ShowsPreview="True"/>
-                        <local:GraphOptionsView Grid.Column="2"
-                                                DataContext="{Binding GraphOptionsVM}"/>
+                        <local:ActionsView Grid.Column="2"
+                                                DataContext="{Binding ActionsVM}"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Run algorithms">
@@ -59,8 +59,8 @@
                           HorizontalAlignment="Center"
                           VerticalAlignment="Stretch"
                           ShowsPreview="True"/>
-            <local:GraphExplorerView Grid.Column="2"
-                                     DataContext="{Binding GraphExplorerVM}"/>
+            <local:ExplorerView Grid.Column="2"
+                                     DataContext="{Binding ExplorerVM}"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -7,13 +7,13 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\GraphExplorerView.xaml.cs">
+    <Compile Update="Views\ExplorerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GraphOptionsView.xaml.cs">
+    <Compile Update="Views\ActionsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\GraphObserverView.xaml.cs">
+    <Compile Update="Views\ObserverView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\MainView.xaml.cs">
@@ -27,10 +27,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\GraphExplorerView.xaml">
+    <Page Update="Views\ExplorerView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GraphOptionsView.xaml">
+    <Page Update="Views\ActionsView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\NewGraphPromptView.xaml">
@@ -39,7 +39,7 @@
     <Page Update="Windows\MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\GraphObserverView.xaml">
+    <Page Update="Views\ObserverView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\MainView.xaml">

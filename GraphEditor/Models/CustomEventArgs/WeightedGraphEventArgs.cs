@@ -1,12 +1,12 @@
 ﻿using CSharpGraphsLibrary;
 using System;
-namespace GraphEditor.Classes
+namespace GraphEditor.Models.CustomEventArgs
 {
-    class WeightedGraphSelectedEventArgs : EventArgs
+    class WeightedGraphEventArgs : EventArgs
     {
         public string Name { get; }
         public WeightedGraph<int, int> WeightedGraph { get; }
-        public WeightedGraphSelectedEventArgs(string name, WeightedGraph<int, int> weightedGraph)
+        public WeightedGraphEventArgs(string name, WeightedGraph<int, int> weightedGraph)
         {
             Name = name;
             WeightedGraph = weightedGraph;

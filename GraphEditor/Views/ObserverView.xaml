@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GraphEditor.Views.GraphObserverView"
+﻿<UserControl x:Class="GraphEditor.Views.ObserverView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450"
              d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance Type=vms:GraphObserverVM}">
+             d:DataContext="{d:DesignInstance Type=vms:ObserverVM}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -16,13 +16,13 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0"
-                   Text="{Binding Name}"
+                   Text="{Binding Name, Mode=OneWay}"
                    Margin="8 5 0 5"/>
         <TextBlock Grid.Row="1"
-                   Text="{Binding Vertices}"
+                   Text="{Binding Vertices, Mode=OneWay}"
                    Margin="8 5 0 5"/>
         <TextBlock Grid.Row="2"
-                   Text="{Binding Edges}"
+                   Text="{Binding Edges, Mode=OneWay}"
                    Margin="8 5 0 5"/>
         <ListView Grid.Row="3"
                   ItemsSource="{Binding GraphDisplay}"

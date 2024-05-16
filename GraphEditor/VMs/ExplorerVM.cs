@@ -1,17 +1,20 @@
 ﻿using CSharpGraphsLibrary;
-using GraphEditor.Classes;
 using GraphEditor.Models;
+using GraphEditor.Models.CustomEventArgs;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+
 namespace GraphEditor.VMs
 {
-    class GraphExplorerVM : VMBase
+    class ExplorerVM : VMBase
     {
         readonly GraphHolder graphHolder;
-        readonly ObservableCollection<GraphInfo> graphInfos;
+        public event Action<GraphEventArgs> GraphSelected;
+        public event Action<WeightedGraphEventArgs> WeightedGraphSelected;
+        readonly BindingList<GraphInfo> graphInfos;
+        public BindingList<GraphInfo> GraphInfos { get => graphInfos; }
         GraphInfo? selectedGraphInfo;
-        public event GraphSelectedEventHandler GraphSelected;
-        public event WeightedGraphSelectedEventHandler WeightedGraphSelected;
-        public ObservableCollection<GraphInfo> GraphInfos { get => graphInfos; }
         public GraphInfo? SelectedGraphInfo
         {
             get => selectedGraphInfo;
@@ -21,16 +24,16 @@ namespace GraphEditor.VMs
                 NotifyPropertyChanged(nameof(SelectedGraphInfo));
                 string name = selectedGraphInfo!.Name;
                 if (selectedGraphInfo!.GraphType == GraphType.Unweighted)
-                    GraphSelected.Invoke(this, new(name, graphHolder.Graphs[name]));
-                else WeightedGraphSelected.Invoke(this, new(name, graphHolder.WeightedGraphs[name]));
+                    GraphSelected.Invoke(new(name, graphHolder.Graphs[name]));
+                else WeightedGraphSelected.Invoke(new(name, graphHolder.WeightedGraphs[name]));
             }
         }
-        public GraphExplorerVM()
+        public ExplorerVM()
         {
             graphInfos = new();
-            graphHolder = new GraphHolder();
+            graphHolder = new();
         }
-        public bool VerifyAttemptToCreateNewGraph(object? sender, GraphInfoEventArgs graphInfoEA)
+        public bool VerifyAttemptToCreateNewGraph(GraphInfoEventArgs graphInfoEA)
         {
             GraphInfo newGraphInfo = graphInfoEA.GraphInfo;
             bool canAdd = true;
@@ -47,6 +50,17 @@ namespace GraphEditor.VMs
                 SelectedGraphInfo = newGraphInfo;
             }
             return canAdd;
+        }
+        public void ReactGraphUpdated(NameEventArgs e)
+        {
+            for (int i = 0; i < GraphInfos.Count; ++i)
+            {
+                if (GraphInfos[i].Name == e.Name)
+                {
+                    GraphInfos[i].Saved = false;
+                    break;
+                }
+            }
         }
     }
 }

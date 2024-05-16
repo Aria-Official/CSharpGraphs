@@ -1,12 +1,12 @@
 ﻿using CSharpGraphsLibrary;
 using System;
-namespace GraphEditor.Classes
+namespace GraphEditor.Models.CustomEventArgs
 {
-    class GraphSelectedEventArgs : EventArgs
+    class GraphEventArgs : EventArgs
     {
         public string Name { get; }
         public Graph<int> Graph { get; }
-        public GraphSelectedEventArgs(string name, Graph<int> graph)
+        public GraphEventArgs(string name, Graph<int> graph)
         {
             Name = name;
             Graph = graph;

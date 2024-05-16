@@ -1,9 +1,9 @@
 ﻿using System.Windows.Controls;
 namespace GraphEditor.Views
 {
-    public partial class GraphExplorerView : UserControl
+    public partial class ExplorerView : UserControl
     {
-        public GraphExplorerView()
+        public ExplorerView()
         {
             InitializeComponent();
             for (int i = 0; i < 3;)

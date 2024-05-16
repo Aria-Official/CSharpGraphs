@@ -1,4 +1,4 @@
-﻿namespace GraphEditor.Commands
+﻿namespace GraphEditor.Commands.WindowManipulationCommands
 {
     class CloseLastDialogWindowCommand : WindowManipulationCommand
     {

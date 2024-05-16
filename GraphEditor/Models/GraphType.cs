@@ -1,4 +1,4 @@
-﻿namespace GraphEditor.Classes
+﻿namespace GraphEditor.Models
 {
     enum GraphType : byte
     {

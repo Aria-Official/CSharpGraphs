@@ -1,5 +1,6 @@
 ﻿using System.Windows;
-namespace GraphEditor.Commands
+
+namespace GraphEditor.Commands.WindowManipulationCommands
 {
     class OpenDialogWindowCommand<TWindow> : WindowManipulationCommand where TWindow : Window, new()
     {

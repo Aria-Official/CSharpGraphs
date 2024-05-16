@@ -1,4 +1,5 @@
 ﻿using GraphEditor.Commands;
+using GraphEditor.Commands.WindowManipulationCommands;
 using System.Windows.Input;
 namespace GraphEditor.VMs
 {

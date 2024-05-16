@@ -1,52 +1,51 @@
 ﻿using CSharpGraphsLibrary;
-using GraphEditor.Classes;
-using System;
-using System.Windows.Input;
+using GraphEditor.Commands.GraphActionCommands;
+using GraphEditor.Models.CustomEventArgs;
 namespace GraphEditor.VMs
 {
-    class GraphOptionsVM : VMBase
+    class ActionsVM : VMBase
     {
         public Graph<int>? Graph { get; private set; }
         public WeightedGraph<int, int>? WeightedGraph { get; private set; }
-        int vertex,
-            edgeEnd1,
-            edgeEnd2,
-            weight;
+        string? vertex,
+                edgeStart,
+                edgeEnd,
+                weight;
         bool oriented;
         bool weightOptionVisibility;
         public string? Vertex
         {
-            get => vertex.ToString();
+            get => vertex;
             set
             {
-                vertex = Convert.ToInt32(value);
+                vertex = value;
                 NotifyPropertyChanged(nameof(Vertex));
             }
         }
-        public string? EdgeEnd1
+        public string? EdgeStart
         {
-            get => edgeEnd1.ToString();
+            get => edgeStart;
             set
             {
-                edgeEnd1 = Convert.ToInt32(value);
-                NotifyPropertyChanged(nameof(EdgeEnd1));
+                edgeStart = value;
+                NotifyPropertyChanged(nameof(EdgeStart));
             }
         }
-        public string? EdgeEnd2
+        public string? EdgeEnd
         {
-            get => edgeEnd2.ToString();
+            get => edgeEnd;
             set
             {
-                edgeEnd2 = Convert.ToInt32(value);
-                NotifyPropertyChanged(nameof(EdgeEnd2));
+                edgeEnd = value;
+                NotifyPropertyChanged(nameof(EdgeEnd));
             }
         }
         public string? Weight
         {
-            get => weight.ToString();
+            get => weight;
             set
             {
-                weight = Convert.ToInt32(value);
+                weight = value;
                 NotifyPropertyChanged(nameof(Weight));
             }
         }
@@ -68,28 +67,33 @@ namespace GraphEditor.VMs
                 NotifyPropertyChanged(nameof(WeightOptionVisibility));
             }
         }
-        public ICommand AddVertexCommand { get; }
-        public ICommand RemoveVertexCommand { get; }
-        public ICommand HasVertexCommand { get; }
-        public ICommand ConnectCommand { get; }
-        public ICommand DisconnectCommand { get; }
-        public ICommand HasEdgeCommand { get; }
-        public void ReactGraphSet(object? sender, GraphSelectedEventArgs e)
+        public AddVertexCommand AddVertexCommand { get; }
+        public RemoveVertexCommand RemoveVertexCommand { get; }
+        public HasVertexCommand HasVertexCommand { get; }
+        public ConnectCommand ConnectCommand { get; }
+        public DisconnectCommand DisconnectCommand { get; }
+        public HasEdgeCommand HasEdgeCommand { get; }
+        public void ReactGraphSet(GraphEventArgs e)
         {
             WeightedGraph = null;
             Graph = e.Graph;
             WeightOptionVisibility = false;
             Weight = null;
         }
-        public void ReactWeightedGraphSet(object? sender, WeightedGraphSelectedEventArgs e)
+        public void ReactWeightedGraphSet(WeightedGraphEventArgs e)
         {
             Graph = null;
             WeightedGraph = e.WeightedGraph;
             WeightOptionVisibility = true;
         }
-        public GraphOptionsVM()
+        public ActionsVM()
         {
-
+            AddVertexCommand = new(this);
+            RemoveVertexCommand = new(this);
+            HasVertexCommand = new(this);
+            ConnectCommand = new(this);
+            DisconnectCommand = new(this);
+            HasEdgeCommand = new(this);
         }
     }
 }

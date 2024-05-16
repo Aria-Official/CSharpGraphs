@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-namespace GraphEditor.Commands
+
+namespace GraphEditor.Commands.WindowManipulationCommands
 {
     abstract class WindowManipulationCommand : SyncCommand
     {

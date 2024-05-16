@@ -2,9 +2,9 @@
 using System.Windows.Controls;
 namespace GraphEditor.Views
 {
-    public partial class GraphOptionsView : UserControl
+    public partial class ActionsView : UserControl
     {
-        public GraphOptionsView()
+        public ActionsView()
         {
             InitializeComponent();
         }
