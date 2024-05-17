@@ -1,5 +1,7 @@
 ﻿using CSharpGraphsLibrary;
 using NUnit.Framework;
+using System.IO;
+
 namespace CSharpGraphsTests
 {
     [TestFixture]
@@ -406,6 +408,57 @@ namespace CSharpGraphsTests
                         edges.Contains((1, 4, false)) &&
                         edges.Contains((2, 1, true)) &&
                         edges.Count == 3);
+        }
+        [Test]
+        public void SerializeAsXMLThrowsOnNullGraph()
+        {
+            Assert.Throws<ArgumentNullException>(() => Graph<int>.SerializeAsXML(null!, ""));
+        }
+        [Test]
+        public void SerializationTestForEmptyGraph()
+        {
+            var graph = Graph<double>.Create();
+            string path = Path.Combine(@"C:\Users\aria17\Desktop\GraphSerializationTests",
+                                        "SerializationTestForEmptyGraph.xml");
+            Graph<double>.SerializeAsXML(graph, path);
+            Graph<double> deserialized = Graph<double>.DeserializeFromXML(path);
+            Assert.That(deserialized.VertexCount == 0 &&
+                        deserialized.EdgeCount == 0);
+        }
+        [Test]
+        public void SerializationTestForNoEdgesGraph()
+        {
+            var graph = Graph<char>.Create('A', 'B', 'C', 'D');
+            string path = Path.Combine(@"C:\Users\aria17\Desktop\GraphSerializationTests",
+                                        "SerializationTestForNoEdgesGraph.xml");
+            Graph<char>.SerializeAsXML(graph, path);
+            Graph<char> deserialized = Graph<char>.DeserializeFromXML(path);
+            for (int i = 65; i < 69;) if (!deserialized.HasVertex((char)(i++))) Assert.Fail();
+            Assert.That(deserialized.VertexCount == 4 &&
+                        deserialized.EdgeCount == 0);
+        }
+        [Test]
+        public void SerializationTest()
+        {
+            var graph = Graph<int>.Create(1, 2, 3, 4, 5);
+            graph.Connect(1, 2, true);
+            graph.Connect(2, 3, false);
+            graph.Connect(3, 1, true);
+            graph.Connect(3, 4, true);
+            graph.Connect(1, 5, false);
+            string path = Path.Combine(@"C:\Users\aria17\Desktop\GraphSerializationTests",
+                                        "SerializationTest.xml");
+            Graph<int>.SerializeAsXML(graph, path);
+            Graph<int> deserialized = Graph<int>.DeserializeFromXML(path);
+            for (int i = 1; i < 6;) if (!deserialized.HasVertex(i++)) Assert.Fail();
+            IEnumerable<(int, int, bool)> edges = deserialized.Edges()!;
+            Assert.That(deserialized.VertexCount == 5 &&
+                        deserialized.EdgeCount == 5 &&
+                        edges.Contains((1, 2, true)) &&
+                        edges.Contains((2, 3, false)) &&
+                        edges.Contains((3, 1, true)) &&
+                        edges.Contains((3, 4, true)) &&
+                        edges.Contains((1, 5, false)));
         }
     }
 }

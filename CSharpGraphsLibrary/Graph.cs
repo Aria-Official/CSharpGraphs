@@ -1,9 +1,14 @@
-﻿namespace CSharpGraphsLibrary
+﻿using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+namespace CSharpGraphsLibrary
 {
-    public class Graph<T> : ITraversableGraph<T> where T : notnull
+    public class Graph<T> : ITraversableGraph<T>, IXmlSerializable where T : notnull
     {
-        readonly Dictionary<T, HashSet<T>> mapping;
+        Dictionary<T, HashSet<T>> mapping;
+        [XmlIgnore]
         public int VertexCount => mapping.Keys.Count;
+        [XmlIgnore]
         public int EdgeCount { get; private set; }
         Graph()
         {
@@ -138,5 +143,95 @@
         }
         IEnumerable<T>? ITraversableGraph<T>.Vertices() => Vertices();
         IEnumerable<T>? ITraversableGraph<T>.NeighboursOf(T vertex) => NeighboursOf(vertex);
+        public static void SerializeAsXML(Graph<T> graph, string filename)
+        {
+            if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
+            using StreamWriter writer = new(filename);
+            XmlSerializer serializer = new(typeof(Graph<T>));
+            serializer.Serialize(writer, graph);
+        }
+        public static Graph<T> DeserializeFromXML(string filename)
+        {
+            using FileStream stream = new(filename, FileMode.Open);
+            XmlSerializer serializer = new(typeof(Graph<T>));
+            var graph = (Graph<T>?)serializer.Deserialize(stream);
+            return graph is not null ? graph : throw new InvalidOperationException(
+                "Attempt to deserialize null as Graph.");
+        }
+        XmlSchema? IXmlSerializable.GetSchema() => null;
+        void IXmlSerializable.WriteXml(XmlWriter writer)
+        {
+            writer.WriteElementString("GraphType", GetType().GetGenericTypeDefinition().Name);
+            writer.WriteElementString("VertexCount", VertexCount.ToString());
+            writer.WriteElementString("EdgeCount", EdgeCount.ToString());
+            if (VertexCount > 0)
+            {
+                writer.WriteStartElement("Vertices");
+                foreach (T vertex in Vertices()!) writer.WriteElementString("V", vertex.ToString());
+                writer.WriteEndElement();
+            }
+            if (EdgeCount > 0)
+            {
+                writer.WriteStartElement("Edges");
+                foreach ((T edgeStart, T edgeEnd, bool oriented) in Edges()!)
+                {
+                    writer.WriteStartElement("E");
+                    writer.WriteElementString("Start", edgeStart.ToString());
+                    writer.WriteElementString("End", edgeEnd.ToString());
+                    writer.WriteElementString("Oriented", oriented.ToString());
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+            }
+        }
+        void IXmlSerializable.ReadXml(XmlReader reader)
+        {
+            reader.ReadStartElement();
+            reader.ReadStartElement();
+            reader.ReadContentAsString(); // Read GraphType.
+            reader.ReadEndElement();
+            reader.ReadStartElement();
+            int vertexCount = reader.ReadContentAsInt(); // Read VertexCount.
+            reader.ReadEndElement();
+            reader.ReadStartElement();
+            int edgeCount = reader.ReadContentAsInt(); // Read EdgeCount.
+            reader.ReadEndElement();
+            mapping = new();
+            if (vertexCount > 0)
+            {
+                reader.ReadStartElement(); // Read vertices start.
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    reader.ReadStartElement(); // Read V start.
+                    T vertex = (T)Convert.ChangeType(reader.ReadContentAsObject(), typeof(T));
+                    mapping.Add(vertex, new());
+                    reader.ReadEndElement(); // Read V end.
+                }
+                reader.ReadEndElement(); // Read vertices end.
+                if (edgeCount > 0)
+                {
+                    reader.ReadStartElement(); // Read edges start.
+                    for (int i = 0; i < edgeCount; i++)
+                    {
+                        reader.ReadStartElement(); // Read E start.
+                        reader.ReadStartElement();
+                        T edgeStart = (T)Convert.ChangeType(reader.ReadContentAsObject(), typeof(T));
+                        reader.ReadEndElement();
+                        reader.ReadStartElement();
+                        T edgeEnd = (T)Convert.ChangeType(reader.ReadContentAsObject(), typeof(T));
+                        reader.ReadEndElement();
+                        reader.ReadStartElement();
+                        string oriented = reader.ReadContentAsString();
+                        bool orient = oriented == "True";
+                        reader.ReadEndElement();
+                        reader.ReadEndElement(); // Read E end.
+                        Connect(edgeStart, edgeEnd, orient);
+                    }
+                    reader.ReadEndElement(); // Read edges end.
+                }
+            }
+            EdgeCount = edgeCount;
+            reader.ReadEndElement();
+        }
     }
 }
