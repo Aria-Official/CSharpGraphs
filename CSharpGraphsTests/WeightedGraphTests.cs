@@ -471,5 +471,56 @@ namespace CSharpGraphsTests
                         edges.Contains(('B', 'A', true, 4)) &&
                         edges.Count == 3);
         }
+        [Test]
+        public void SerializeAsXMLThrowsOnNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => WeightedGraph<int, int>.SerializeAsXML(null!, ""));
+        }
+        [Test]
+        public void SerializationTestForEmptyWeightedGraph()
+        {
+            var graph = WeightedGraph<double, double>.Create();
+            string path = Path.Combine(@"C:\Users\aria17\Desktop\WeightedGraphSerializationTests",
+                                        "SerializationTestForEmptyWeightedGraph.xml");
+            WeightedGraph<double, double>.SerializeAsXML(graph, path);
+            var deserialized = WeightedGraph<double, double>.DeserializeFromXML(path);
+            Assert.That(deserialized.VertexCount == 0 &&
+                        deserialized.EdgeCount == 0);
+        }
+        [Test]
+        public void SerializationTestForNoEdgesWeightedGraph()
+        {
+            var graph = WeightedGraph<char, int>.Create('A', 'B', 'C', 'D');
+            string path = Path.Combine(@"C:\Users\aria17\Desktop\WeightedGraphSerializationTests",
+                                        "SerializationTestForNoEdgesWeightedGraph.xml");
+            WeightedGraph<char, int>.SerializeAsXML(graph, path);
+            var deserialized = WeightedGraph<char, int>.DeserializeFromXML(path);
+            for (int i = 65; i < 69;) if (!deserialized.HasVertex((char)(i++))) Assert.Fail();
+            Assert.That(deserialized.VertexCount == 4 &&
+                        deserialized.EdgeCount == 0);
+        }
+        [Test]
+        public void SerializationTest()
+        {
+            var graph = WeightedGraph<int, double>.Create(1, 2, 3, 4, 5);
+            graph.Connect(1, 2, true, 10.1);
+            graph.Connect(2, 3, false, 20.2);
+            graph.Connect(3, 1, true, 30.3);
+            graph.Connect(3, 4, true, 40.4);
+            graph.Connect(1, 5, false, 50.5);
+            string path = Path.Combine(@"C:\Users\aria17\Desktop\WeightedGraphSerializationTests",
+                                        "SerializationTest.xml");
+            WeightedGraph<int, double>.SerializeAsXML(graph, path);
+            var deserialized = WeightedGraph<int, double>.DeserializeFromXML(path);
+            for (int i = 1; i < 6;) if (!deserialized.HasVertex(i++)) Assert.Fail();
+            IEnumerable<(int, int, bool, double)> edges = deserialized.Edges()!;
+            Assert.That(deserialized.VertexCount == 5 &&
+                        deserialized.EdgeCount == 5 &&
+                        edges.Contains((1, 2, true, 10.1)) &&
+                        edges.Contains((2, 3, false, 20.2)) &&
+                        edges.Contains((3, 1, true, 30.3)) &&
+                        edges.Contains((3, 4, true, 40.4)) &&
+                        edges.Contains((1, 5, false, 50.5)));
+        }
     }
 }

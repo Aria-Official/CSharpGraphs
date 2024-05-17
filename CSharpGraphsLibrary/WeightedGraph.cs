@@ -1,8 +1,13 @@
-﻿namespace CSharpGraphsLibrary
+﻿using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+namespace CSharpGraphsLibrary
 {
-    public class WeightedGraph<TVertex, TEdgeWeight> : ITraversableGraph<TVertex> where TVertex : notnull
+    public class WeightedGraph<TVertex, TEdgeWeight> : ITraversableGraph<TVertex>,
+                                                       IXmlSerializable
+        where TVertex : notnull
     {
-        readonly Dictionary<TVertex, Dictionary<TVertex, TEdgeWeight>> mapping;
+        Dictionary<TVertex, Dictionary<TVertex, TEdgeWeight>> mapping;
         public int VertexCount => mapping.Keys.Count;
         public int EdgeCount { get; private set; }
         WeightedGraph()
@@ -169,5 +174,99 @@
             return edges;
         }
         IEnumerable<TVertex>? ITraversableGraph<TVertex>.Vertices() => Vertices();
+        public static void SerializeAsXML(WeightedGraph<TVertex, TEdgeWeight> graph, string filename)
+        {
+            if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
+            using StreamWriter writer = new(filename);
+            XmlSerializer serializer = new(typeof(WeightedGraph<TVertex, TEdgeWeight>));
+            serializer.Serialize(writer, graph);
+        }
+        public static WeightedGraph<TVertex, TEdgeWeight> DeserializeFromXML(string filename)
+        {
+            using FileStream stream = new(filename, FileMode.Open);
+            XmlSerializer serializer = new(typeof(WeightedGraph<TVertex, TEdgeWeight>));
+            var graph = (WeightedGraph<TVertex, TEdgeWeight>?)serializer.Deserialize(stream);
+            return graph is not null ? graph : throw new InvalidOperationException(
+                "Attempt to deserialize null as WeightedGraph.");
+        }
+        XmlSchema? IXmlSerializable.GetSchema() => null;
+        void IXmlSerializable.WriteXml(XmlWriter writer)
+        {
+            writer.WriteElementString("Type", GetType().GetGenericTypeDefinition().Name);
+            writer.WriteElementString("VertexCount", VertexCount.ToString());
+            writer.WriteElementString("EdgeCount", EdgeCount.ToString());
+            if (VertexCount > 0)
+            {
+                writer.WriteStartElement("Vertices");
+                foreach (TVertex vertex in mapping.Keys) writer.WriteElementString("V", vertex.ToString());
+                writer.WriteEndElement();
+            }
+            if (EdgeCount > 0)
+            {
+                writer.WriteStartElement("Edges");
+                foreach ((TVertex edgeStart, TVertex edgeEnd, bool oriented, TEdgeWeight weight) in Edges()!)
+                {
+                    writer.WriteStartElement("E");
+                    writer.WriteElementString("Start", edgeStart.ToString());
+                    writer.WriteElementString("End", edgeEnd.ToString());
+                    writer.WriteElementString("Oriented", oriented.ToString());
+                    writer.WriteElementString("Weight", weight!.ToString());
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+            }
+        }
+        void IXmlSerializable.ReadXml(XmlReader reader)
+        {
+            reader.ReadStartElement();
+            reader.ReadStartElement();
+            reader.ReadContentAsString();
+            reader.ReadEndElement();
+            reader.ReadStartElement();
+            int vertexCount = reader.ReadContentAsInt();
+            reader.ReadEndElement();
+            reader.ReadStartElement();
+            int edgeCount = reader.ReadContentAsInt();
+            reader.ReadEndElement();
+            mapping = new();
+            if (vertexCount > 0)
+            {
+                reader.ReadStartElement();
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    reader.ReadStartElement();
+                    TVertex vertex = (TVertex)Convert.ChangeType(reader.ReadContentAsObject(), typeof(TVertex));
+                    mapping.Add(vertex, new());
+                    reader.ReadEndElement();
+                }
+                reader.ReadEndElement();
+                if (edgeCount > 0)
+                {
+                    reader.ReadStartElement();
+                    for (int i = 0; i < edgeCount; i++)
+                    {
+                        reader.ReadStartElement();
+                        reader.ReadStartElement();
+                        TVertex edgeStart = (TVertex)Convert.ChangeType(reader.ReadContentAsObject(), typeof(TVertex));
+                        reader.ReadEndElement();
+                        reader.ReadStartElement();
+                        TVertex edgeEnd = (TVertex)Convert.ChangeType(reader.ReadContentAsObject(), typeof(TVertex));
+                        reader.ReadEndElement();
+                        reader.ReadStartElement();
+                        string oriented = reader.ReadContentAsString();
+                        bool orient = oriented == "True";
+                        reader.ReadEndElement();
+                        reader.ReadStartElement();
+                        TEdgeWeight weight = (TEdgeWeight)Convert.ChangeType(reader.ReadContentAsObject(), typeof(TEdgeWeight));   
+                        reader.ReadEndElement();
+                        reader.ReadEndElement();
+                        Connect(edgeStart, edgeEnd, orient, weight);
+                    }
+                    reader.ReadEndElement();
+                }
+            }
+            EdgeCount = edgeCount;
+            reader.ReadEndElement();
+        }
     }
 }

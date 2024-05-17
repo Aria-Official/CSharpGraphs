@@ -3,7 +3,9 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 namespace CSharpGraphsLibrary
 {
-    public class Graph<T> : ITraversableGraph<T>, IXmlSerializable where T : notnull
+    public class Graph<T> : ITraversableGraph<T>,
+                            IXmlSerializable
+        where T : notnull
     {
         Dictionary<T, HashSet<T>> mapping;
         [XmlIgnore]
@@ -161,13 +163,13 @@ namespace CSharpGraphsLibrary
         XmlSchema? IXmlSerializable.GetSchema() => null;
         void IXmlSerializable.WriteXml(XmlWriter writer)
         {
-            writer.WriteElementString("GraphType", GetType().GetGenericTypeDefinition().Name);
+            writer.WriteElementString("Type", GetType().GetGenericTypeDefinition().Name);
             writer.WriteElementString("VertexCount", VertexCount.ToString());
             writer.WriteElementString("EdgeCount", EdgeCount.ToString());
             if (VertexCount > 0)
             {
                 writer.WriteStartElement("Vertices");
-                foreach (T vertex in Vertices()!) writer.WriteElementString("V", vertex.ToString());
+                foreach (T vertex in mapping.Keys) writer.WriteElementString("V", vertex.ToString());
                 writer.WriteEndElement();
             }
             if (EdgeCount > 0)
@@ -188,32 +190,32 @@ namespace CSharpGraphsLibrary
         {
             reader.ReadStartElement();
             reader.ReadStartElement();
-            reader.ReadContentAsString(); // Read GraphType.
+            reader.ReadContentAsString();
             reader.ReadEndElement();
             reader.ReadStartElement();
-            int vertexCount = reader.ReadContentAsInt(); // Read VertexCount.
+            int vertexCount = reader.ReadContentAsInt();
             reader.ReadEndElement();
             reader.ReadStartElement();
-            int edgeCount = reader.ReadContentAsInt(); // Read EdgeCount.
+            int edgeCount = reader.ReadContentAsInt();
             reader.ReadEndElement();
             mapping = new();
             if (vertexCount > 0)
             {
-                reader.ReadStartElement(); // Read vertices start.
+                reader.ReadStartElement();
                 for (int i = 0; i < vertexCount; i++)
                 {
-                    reader.ReadStartElement(); // Read V start.
+                    reader.ReadStartElement();
                     T vertex = (T)Convert.ChangeType(reader.ReadContentAsObject(), typeof(T));
                     mapping.Add(vertex, new());
-                    reader.ReadEndElement(); // Read V end.
+                    reader.ReadEndElement();
                 }
-                reader.ReadEndElement(); // Read vertices end.
+                reader.ReadEndElement();
                 if (edgeCount > 0)
                 {
-                    reader.ReadStartElement(); // Read edges start.
+                    reader.ReadStartElement();
                     for (int i = 0; i < edgeCount; i++)
                     {
-                        reader.ReadStartElement(); // Read E start.
+                        reader.ReadStartElement();
                         reader.ReadStartElement();
                         T edgeStart = (T)Convert.ChangeType(reader.ReadContentAsObject(), typeof(T));
                         reader.ReadEndElement();
@@ -224,10 +226,10 @@ namespace CSharpGraphsLibrary
                         string oriented = reader.ReadContentAsString();
                         bool orient = oriented == "True";
                         reader.ReadEndElement();
-                        reader.ReadEndElement(); // Read E end.
+                        reader.ReadEndElement();
                         Connect(edgeStart, edgeEnd, orient);
                     }
-                    reader.ReadEndElement(); // Read edges end.
+                    reader.ReadEndElement();
                 }
             }
             EdgeCount = edgeCount;

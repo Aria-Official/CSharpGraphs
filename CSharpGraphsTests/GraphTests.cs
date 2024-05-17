@@ -1,7 +1,5 @@
 ﻿using CSharpGraphsLibrary;
 using NUnit.Framework;
-using System.IO;
-
 namespace CSharpGraphsTests
 {
     [TestFixture]
@@ -410,7 +408,7 @@ namespace CSharpGraphsTests
                         edges.Count == 3);
         }
         [Test]
-        public void SerializeAsXMLThrowsOnNullGraph()
+        public void SerializeAsXMLThrowsOnNull()
         {
             Assert.Throws<ArgumentNullException>(() => Graph<int>.SerializeAsXML(null!, ""));
         }
@@ -421,7 +419,7 @@ namespace CSharpGraphsTests
             string path = Path.Combine(@"C:\Users\aria17\Desktop\GraphSerializationTests",
                                         "SerializationTestForEmptyGraph.xml");
             Graph<double>.SerializeAsXML(graph, path);
-            Graph<double> deserialized = Graph<double>.DeserializeFromXML(path);
+            var deserialized = Graph<double>.DeserializeFromXML(path);
             Assert.That(deserialized.VertexCount == 0 &&
                         deserialized.EdgeCount == 0);
         }
@@ -432,7 +430,7 @@ namespace CSharpGraphsTests
             string path = Path.Combine(@"C:\Users\aria17\Desktop\GraphSerializationTests",
                                         "SerializationTestForNoEdgesGraph.xml");
             Graph<char>.SerializeAsXML(graph, path);
-            Graph<char> deserialized = Graph<char>.DeserializeFromXML(path);
+            var deserialized = Graph<char>.DeserializeFromXML(path);
             for (int i = 65; i < 69;) if (!deserialized.HasVertex((char)(i++))) Assert.Fail();
             Assert.That(deserialized.VertexCount == 4 &&
                         deserialized.EdgeCount == 0);
@@ -449,7 +447,7 @@ namespace CSharpGraphsTests
             string path = Path.Combine(@"C:\Users\aria17\Desktop\GraphSerializationTests",
                                         "SerializationTest.xml");
             Graph<int>.SerializeAsXML(graph, path);
-            Graph<int> deserialized = Graph<int>.DeserializeFromXML(path);
+            var deserialized = Graph<int>.DeserializeFromXML(path);
             for (int i = 1; i < 6;) if (!deserialized.HasVertex(i++)) Assert.Fail();
             IEnumerable<(int, int, bool)> edges = deserialized.Edges()!;
             Assert.That(deserialized.VertexCount == 5 &&
