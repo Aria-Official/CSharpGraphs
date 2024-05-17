@@ -1,6 +1,5 @@
 ﻿using GraphEditor.Exceptions;
 using GraphEditor.Models;
-using GraphEditor.Models.CustomEventArgs;
 using GraphEditor.VMs;
 using System;
 using System.Windows;
@@ -9,11 +8,8 @@ namespace GraphEditor.Commands.GraphActionCommands
     class ConnectCommand : SyncCommand
     {
         readonly ActionsVM actionsVM;
-        public event Action<EdgeEventArgs>? Connected;
-        public ConnectCommand(ActionsVM actionsVM)
-        {
-            this.actionsVM = actionsVM;
-        }
+        public event Action<int, int>? Connected;
+        public ConnectCommand(ActionsVM actionsVM) => this.actionsVM = actionsVM;
         public override void Execute(object? parameter)
         {
             try
@@ -31,11 +27,10 @@ namespace GraphEditor.Commands.GraphActionCommands
                                                                "Edge start doesn't parse to an integer.");
                 InputParser.ParseVertex(edgeEnd, out int v2, "Edge end was not specified.",
                                                              "Edge end doesn't parse to an integer.");
-                EdgeEventArgs e = new(v1, v2);
                 if (weightedGraphNull)
                 {
                     actionsVM.Graph!.Connect(v1, v2, oriented);
-                    Connected?.Invoke(e);
+                    Connected?.Invoke(v1, v2);
                 }
                 else
                 {
@@ -44,7 +39,7 @@ namespace GraphEditor.Commands.GraphActionCommands
                                                                "Edge weight doesn't parse to an integer.",
                                                                "Edge weight wasn't posisitive.");
                     actionsVM.WeightedGraph!.Connect(v1, v2, oriented, w);
-                    Connected?.Invoke(e);
+                    Connected?.Invoke(v1, v2);
                 }
             }
             catch (InvalidInputException IIExc) { MessageBox.Show(IIExc.Message, "Input error"); }

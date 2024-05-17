@@ -1,6 +1,5 @@
 ﻿using CSharpGraphsLibrary;
 using GraphEditor.Commands.GraphActionCommands;
-using GraphEditor.Models.CustomEventArgs;
 namespace GraphEditor.VMs
 {
     class ActionsVM : VMBase
@@ -11,8 +10,8 @@ namespace GraphEditor.VMs
                 edgeStart,
                 edgeEnd,
                 weight;
-        bool oriented;
-        bool weightOptionVisibility;
+        bool oriented,
+             weightOptionVisibility;
         public string? Vertex
         {
             get => vertex;
@@ -73,17 +72,17 @@ namespace GraphEditor.VMs
         public ConnectCommand ConnectCommand { get; }
         public DisconnectCommand DisconnectCommand { get; }
         public HasEdgeCommand HasEdgeCommand { get; }
-        public void ReactGraphSet(GraphEventArgs e)
+        public void ReactGraphSet(string _, Graph<int>? graph)
         {
             WeightedGraph = null;
-            Graph = e.Graph;
+            Graph = graph;
             WeightOptionVisibility = false;
             Weight = null;
         }
-        public void ReactWeightedGraphSet(WeightedGraphEventArgs e)
+        public void ReactWeightedGraphSet(string _, WeightedGraph<int, int> weightedGraph)
         {
             Graph = null;
-            WeightedGraph = e.WeightedGraph;
+            WeightedGraph = weightedGraph;
             WeightOptionVisibility = true;
         }
         public ActionsVM()

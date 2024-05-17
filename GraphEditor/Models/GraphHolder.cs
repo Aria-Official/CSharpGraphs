@@ -6,10 +6,6 @@ namespace GraphEditor.Models
     {
         public Dictionary<string, Graph<int>> Graphs { get; }
         public Dictionary<string, WeightedGraph<int, int>> WeightedGraphs { get; }
-        public GraphHolder()
-        {
-            Graphs = new();
-            WeightedGraphs = new();
-        }
+        public GraphHolder() { Graphs = new(); WeightedGraphs = new(); }
     }
 }

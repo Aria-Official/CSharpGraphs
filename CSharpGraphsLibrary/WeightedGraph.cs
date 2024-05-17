@@ -8,7 +8,9 @@ namespace CSharpGraphsLibrary
         where TVertex : notnull
     {
         Dictionary<TVertex, Dictionary<TVertex, TEdgeWeight>> mapping;
+        [XmlIgnore]
         public int VertexCount => mapping.Keys.Count;
+        [XmlIgnore]
         public int EdgeCount { get; private set; }
         WeightedGraph()
         {

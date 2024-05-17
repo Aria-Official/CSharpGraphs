@@ -8,10 +8,7 @@ namespace GraphEditor.Commands.GraphActionCommands
     class HasEdgeCommand : SyncCommand
     {
         readonly ActionsVM actionsVM;
-        public HasEdgeCommand(ActionsVM actionsVM)
-        {
-            this.actionsVM = actionsVM;
-        }
+        public HasEdgeCommand(ActionsVM actionsVM) => this.actionsVM = actionsVM;
         public override void Execute(object? parameter)
         {
             try
@@ -40,7 +37,7 @@ namespace GraphEditor.Commands.GraphActionCommands
                     else MessageBox.Show("Edge not found.", "Not found");
                 }
             }
-            catch (InvalidInputException IIExc) { MessageBox.Show(IIExc.Message, "Input error"); }
+            catch (InvalidInputException exc) { MessageBox.Show(exc.Message, "Input error"); }
         }
     }
 }

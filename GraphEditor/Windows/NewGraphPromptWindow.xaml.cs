@@ -3,9 +3,6 @@ namespace GraphEditor.Windows
 {
     public partial class NewGraphPromptWindow : Window
     {
-        public NewGraphPromptWindow()
-        {
-            InitializeComponent();
-        }
+        public NewGraphPromptWindow() => InitializeComponent();
     }
 }

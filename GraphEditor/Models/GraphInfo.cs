@@ -1,5 +1,4 @@
 ﻿using GraphEditor.VMs;
-using System.ComponentModel;
 namespace GraphEditor.Models
 {
     class GraphInfo : VMBase

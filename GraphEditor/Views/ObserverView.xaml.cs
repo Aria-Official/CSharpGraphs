@@ -3,9 +3,6 @@ namespace GraphEditor.Views
 {
     public partial class ObserverView : UserControl
     {
-        public ObserverView()
-        {
-            InitializeComponent();
-        }
+        public ObserverView() => InitializeComponent();
     }
 }

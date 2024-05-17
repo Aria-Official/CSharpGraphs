@@ -1,8 +1,5 @@
 ﻿using System.Windows;
 namespace GraphEditor
 {
-    public partial class App : Application
-    {
-
-    }
+    public partial class App : Application { }
 }

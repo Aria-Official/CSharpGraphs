@@ -7,10 +7,7 @@ namespace GraphEditor.Commands.GraphActionCommands
     class HasVertexCommand : SyncCommand
     {
         readonly ActionsVM actionsVM;
-        public HasVertexCommand(ActionsVM actionsVM)
-        {
-            this.actionsVM = actionsVM;
-        }
+        public HasVertexCommand(ActionsVM actionsVM) => this.actionsVM = actionsVM;
         public override void Execute(object? parameter)
         {
             try

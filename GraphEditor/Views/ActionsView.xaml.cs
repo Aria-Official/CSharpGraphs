@@ -1,12 +1,8 @@
-﻿using GraphEditor.VMs;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 namespace GraphEditor.Views
 {
     public partial class ActionsView : UserControl
     {
-        public ActionsView()
-        {
-            InitializeComponent();
-        }
+        public ActionsView() => InitializeComponent();
     }
 }

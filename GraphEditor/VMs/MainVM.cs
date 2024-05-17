@@ -1,6 +1,6 @@
-﻿using GraphEditor.Commands.WindowManipulationCommands;
+﻿using GraphEditor.Commands;
+using GraphEditor.Commands.WindowManipulationCommands;
 using GraphEditor.Windows;
-using System.Windows.Input;
 namespace GraphEditor.VMs
 {
     class MainVM : VMBase
@@ -9,8 +9,7 @@ namespace GraphEditor.VMs
         public ActionsVM ActionsVM { get; }
         public ExplorerVM ExplorerVM { get; }
         public OpenDialogWindowCommand<NewGraphPromptWindow> OpenNewGraphPromptWindowCommand { get; }
-        public ICommand OpenGraphFromFileCommand { get; }
-        public ICommand SaveGraphAsFileCommand { get; }
+        public OpenGraphFromFileCommand OpenGraphFromFileCommand { get; }
         public MainVM()
         {
             ObserverVM = new();
@@ -20,14 +19,17 @@ namespace GraphEditor.VMs
             ExplorerVM.WeightedGraphSelected += ObserverVM.ReactWeightedGraphSet;
             ExplorerVM.GraphSelected += ActionsVM.ReactGraphSet;
             ExplorerVM.WeightedGraphSelected += ActionsVM.ReactWeightedGraphSet;
+            ExplorerVM.CloseGraphCommand.GraphClosed += ExplorerVM.ReactGraphClosed;
             ActionsVM.AddVertexCommand.VertexAdded += ObserverVM.DisplayOnVertexAdded;
             ActionsVM.RemoveVertexCommand.VertexRemoved += ObserverVM.DisplayOnVertexRemoved;
             ActionsVM.ConnectCommand.Connected += ObserverVM.DisplayOnEdgesChanged;
             ActionsVM.DisconnectCommand.Disconnected += ObserverVM.DisplayOnEdgesChanged;
             ObserverVM.GraphUpdated += ExplorerVM.ReactGraphUpdated;
             OpenNewGraphPromptWindowCommand = new();
-            OpenGraphFromFileCommand = null;
-            SaveGraphAsFileCommand = null;
+            OpenGraphFromFileCommand = new();
+            OpenGraphFromFileCommand.AttemptToOpenNamedGraph += ExplorerVM.VerifyGraphNameAllowed;
+            OpenGraphFromFileCommand.GraphOpened += ExplorerVM.ReactGraphOpened;
+            OpenGraphFromFileCommand.WeightedGraphOpened += ExplorerVM.ReactWeightedGraphOpened;
         }
     }
 }

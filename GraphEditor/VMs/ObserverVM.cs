@@ -1,5 +1,4 @@
 ﻿using CSharpGraphsLibrary;
-using GraphEditor.Models.CustomEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +8,7 @@ namespace GraphEditor.VMs
 {
     class ObserverVM : VMBase
     {
-        public event Action<NameEventArgs> GraphUpdated;
+        public event Action<string>? GraphUpdated;
         Graph<int>? graph;
         WeightedGraph<int, int>? weightedGraph;
         readonly StringBuilder SB = new();
@@ -45,27 +44,41 @@ namespace GraphEditor.VMs
             }
         }
         public ObservableCollection<string> GraphDisplay { get => graphDisplay; }
-        public void ReactGraphSet(GraphEventArgs e)
+        public ObserverVM()
         {
-            Name = e.Name;
+            Name = "no graph";
+            graphDisplay = new();
+        }
+        public void ReactGraphSet(string name, Graph<int>? graph)
+        {
+            Name = name;
             weightedGraph = null;
-            graph = e.Graph;
-            Vertices = graph.VertexCount.ToString();
-            Edges = graph.EdgeCount.ToString();
-            // Display graph here.
-            GraphDisplay.Clear();
-            IEnumerable<int>? vs = graph.Vertices();
-            if (vs is not null)
+            this.graph = graph;
+            if (graph is not null)
             {
-                foreach (int v in vs)
-                    GraphDisplay.Add($"{v} : {'{'} {string.Join(" ", graph.NeighboursOf(v)!)} {'}'}");
+                Vertices = graph.VertexCount.ToString();
+                Edges = graph.EdgeCount.ToString();
+                // Display graph here.
+                GraphDisplay.Clear();
+                IEnumerable<int>? vs = graph.Vertices();
+                if (vs is not null)
+                {
+                    foreach (int v in vs)
+                        GraphDisplay.Add($"{v} : {'{'} {string.Join(" ", graph.NeighboursOf(v)!)} {'}'}");
+                }
+            }
+            else
+            {
+                GraphDisplay.Clear();
+                Vertices = 0.ToString();
+                Edges = 0.ToString();
             }
         }
-        public void ReactWeightedGraphSet(WeightedGraphEventArgs e)
+        public void ReactWeightedGraphSet(string name, WeightedGraph<int, int> weightedGraph)
         {
-            Name = e.Name;
+            Name = name;
             graph = null;
-            weightedGraph = e.WeightedGraph;
+            this.weightedGraph = weightedGraph;
             Vertices = weightedGraph.VertexCount.ToString();
             Edges = weightedGraph.EdgeCount.ToString();
             // Display graph here.
@@ -81,38 +94,38 @@ namespace GraphEditor.VMs
                 }
             }
         }
-        public void DisplayOnVertexAdded(VertexEventArgs e)
+        public void DisplayOnVertexAdded(int vertex)
         {
-            GraphDisplay.Add($"{e.Vertex} : {"{  }"}");
+            GraphDisplay.Add($"{vertex} : {"{  }"}");
             if (weightedGraph is null) Vertices = graph!.VertexCount.ToString();
             else Vertices = weightedGraph!.VertexCount.ToString();
-            GraphUpdated.Invoke(new(name!));
+            GraphUpdated?.Invoke(new(name!));
         }
-        public void DisplayOnVertexRemoved(VertexEventArgs e)
+        public void DisplayOnVertexRemoved(int vertex)
         {
-            GraphUpdated.Invoke(new(name!));
+            GraphUpdated?.Invoke(new(name!));
             int removedIndex = 0,
                     i = 0;
-            string vertex = e.Vertex.ToString();
+            string v = vertex.ToString();
             if (weightedGraph is null)
             {
                 for (; i < GraphDisplay.Count; ++i)
                 {
-                    if (GraphDisplay[i].StartsWith(vertex)) { removedIndex = i; break; }
-                    else GraphDisplay[i] = GraphDisplay[i].Replace(vertex, string.Empty);
+                    if (GraphDisplay[i].StartsWith(v)) { removedIndex = i; break; }
+                    else GraphDisplay[i] = GraphDisplay[i].Replace(v, string.Empty);
                 }
                 for (; i < GraphDisplay.Count; ++i)
-                    GraphDisplay[i] = GraphDisplay[i].Replace(vertex, string.Empty);
+                    GraphDisplay[i] = GraphDisplay[i].Replace(v, string.Empty);
                 GraphDisplay.RemoveAt(removedIndex);
                 Vertices = graph!.VertexCount.ToString();
                 Edges = graph.EdgeCount.ToString();
             }
             else
             {
-                string pattern = $"^({vertex} : [0-9]+)$";
+                string pattern = $"^({v} : [0-9]+)$";
                 for (; i < GraphDisplay.Count; ++i)
                 {
-                    if (GraphDisplay[i].StartsWith(vertex)) { removedIndex = i; break; }
+                    if (GraphDisplay[i].StartsWith(v)) { removedIndex = i; break; }
                     else GraphDisplay[i] = Regex.Replace(GraphDisplay[i], pattern, string.Empty);
                 }
                 for (; i < GraphDisplay.Count; ++i)
@@ -122,12 +135,10 @@ namespace GraphEditor.VMs
                 Edges = weightedGraph.EdgeCount.ToString();
             }
         }
-        public void DisplayOnEdgesChanged(EdgeEventArgs e)
+        public void DisplayOnEdgesChanged(int v1, int v2)
         {
-            GraphUpdated.Invoke(new(name!));
-            int v1 = e.EdgeStart,
-                v2 = e.EdgeEnd,
-                i = 0;
+            GraphUpdated?.Invoke(new(name!));
+            int i = 0;
             bool firstFound = false;
             if (weightedGraph is null)
             {
@@ -135,12 +146,12 @@ namespace GraphEditor.VMs
                 {
                     if (GraphDisplay[i].StartsWith(v1.ToString()))
                     {
-                        GraphDisplay[i] = $"{v1} : {'{'} {string.Join(" ", graph!.NeighboursOf(v1)!)} {'}'}";
+                        GraphDisplay[i] = $"{v1} : {'{'} {string.Join(' ', graph!.NeighboursOf(v1)!)} {'}'}";
                         firstFound = true; break;
                     }
                     if (GraphDisplay[i].StartsWith(v2.ToString()))
                     {
-                        GraphDisplay[i] = $"{v2} : {'{'} {string.Join(" ", graph!.NeighboursOf(v2)!)} {'}'}";
+                        GraphDisplay[i] = $"{v2} : {'{'} {string.Join(' ', graph!.NeighboursOf(v2)!)} {'}'}";
                         break;
                     }
                 }
@@ -150,7 +161,7 @@ namespace GraphEditor.VMs
                     {
                         if (GraphDisplay[i].StartsWith(v2.ToString()))
                         {
-                            GraphDisplay[i] = $"{v2} : {'{'} {string.Join(" ", graph!.NeighboursOf(v2)!)} {'}'}";
+                            GraphDisplay[i] = $"{v2} : {'{'} {string.Join(' ', graph!.NeighboursOf(v2)!)} {'}'}";
                             break;
                         }
                     }
@@ -161,7 +172,7 @@ namespace GraphEditor.VMs
                     {
                         if (GraphDisplay[i].StartsWith(v1.ToString()))
                         {
-                            GraphDisplay[i] = $"{v1} : {'{'} {string.Join(" ", graph!.NeighboursOf(v1)!)} {'}'}";
+                            GraphDisplay[i] = $"{v1} : {'{'} {string.Join(' ', graph!.NeighboursOf(v1)!)} {'}'}";
                             break;
                         }
                     }
@@ -175,16 +186,16 @@ namespace GraphEditor.VMs
                     if (GraphDisplay[i].StartsWith(v1.ToString()))
                     {
                         SB.Clear();
-                        foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v1)!) SB.Append($"({n} : {w})");
-                        GraphDisplay[i] = $"{v1} : {'{'} {SB} {'}'}";
+                        foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v1)!) SB.Append($"({n} : {w}) ");
+                        GraphDisplay[i] = $"{v1} : {'{'} {SB}{'}'}";
                         SB.Clear();
                         firstFound = true; break;
                     }
                     if (GraphDisplay[i].StartsWith(v2.ToString()))
                     {
                         SB.Clear();
-                        foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v2)!) SB.Append($"({n} : {w})");
-                        GraphDisplay[i] = $"{v2} : {'{'} {SB} {'}'}";
+                        foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v2)!) SB.Append($"({n} : {w}) ");
+                        GraphDisplay[i] = $"{v2} : {'{'} {SB}{'}'}";
                         SB.Clear();
                         break;
                     }
@@ -219,11 +230,6 @@ namespace GraphEditor.VMs
                 }
                 Edges = weightedGraph!.EdgeCount.ToString();
             }
-        }
-        public ObserverVM()
-        {
-            Name = "no graph";
-            graphDisplay = new();
         }
     }
 }

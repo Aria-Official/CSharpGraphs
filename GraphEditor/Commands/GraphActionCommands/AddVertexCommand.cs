@@ -1,6 +1,5 @@
 ﻿using GraphEditor.Exceptions;
 using GraphEditor.Models;
-using GraphEditor.Models.CustomEventArgs;
 using GraphEditor.VMs;
 using System;
 using System.Windows;
@@ -9,11 +8,8 @@ namespace GraphEditor.Commands.GraphActionCommands
     class AddVertexCommand : SyncCommand
     {
         readonly ActionsVM actionsVM;
-        public event Action<VertexEventArgs>? VertexAdded;
-        public AddVertexCommand(ActionsVM actionsVM)
-        {
-            this.actionsVM = actionsVM;
-        }
+        public event Action<int>? VertexAdded;
+        public AddVertexCommand(ActionsVM actionsVM) => this.actionsVM = actionsVM;
         public override void Execute(object? parameter)
         {
             try
@@ -29,12 +25,12 @@ namespace GraphEditor.Commands.GraphActionCommands
                                                            "Vertex doesn't parse to an integer.");
                 if (weightedGraphNull)
                 {
-                    if (actionsVM.Graph!.TryAddVertex(vertex)) VertexAdded?.Invoke(new(vertex));
+                    if (actionsVM.Graph!.TryAddVertex(vertex)) VertexAdded?.Invoke(vertex);
                     else MessageBox.Show("Vertex was already in the graph.", "Vertex exists");
                 }
                 else
                 {
-                    if (actionsVM.WeightedGraph!.TryAddVertex(vertex)) VertexAdded?.Invoke(new(vertex));
+                    if (actionsVM.WeightedGraph!.TryAddVertex(vertex)) VertexAdded?.Invoke(vertex);
                     else MessageBox.Show("Vertex was already in the graph.", "Vertex exists");
                 }
             }

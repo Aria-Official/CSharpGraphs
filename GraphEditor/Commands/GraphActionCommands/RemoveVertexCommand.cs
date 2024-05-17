@@ -1,20 +1,15 @@
 ﻿using GraphEditor.Exceptions;
 using GraphEditor.Models;
-using GraphEditor.Models.CustomEventArgs;
 using GraphEditor.VMs;
 using System;
 using System.Windows;
-
 namespace GraphEditor.Commands.GraphActionCommands
 {
     class RemoveVertexCommand : SyncCommand
     {
         readonly ActionsVM actionsVM;
-        public event Action<VertexEventArgs>? VertexRemoved;
-        public RemoveVertexCommand(ActionsVM actionsVM)
-        {
-            this.actionsVM = actionsVM;
-        }
+        public event Action<int>? VertexRemoved;
+        public RemoveVertexCommand(ActionsVM actionsVM) => this.actionsVM = actionsVM;
         public override void Execute(object? parameter)
         {
             try
@@ -30,12 +25,12 @@ namespace GraphEditor.Commands.GraphActionCommands
                                                            "Vertex doesn't parse to an integer.");
                 if (weightedGraphNull)
                 {
-                    if (actionsVM.Graph!.TryRemoveVertex(vertex)) VertexRemoved?.Invoke(new(vertex));
+                    if (actionsVM.Graph!.TryRemoveVertex(vertex)) VertexRemoved?.Invoke(vertex);
                     else MessageBox.Show("Vertex was not in the graph.", "Vertex missing");
                 }
                 else
                 {
-                    if (actionsVM.WeightedGraph!.TryRemoveVertex(vertex)) VertexRemoved?.Invoke(new(vertex));
+                    if (actionsVM.WeightedGraph!.TryRemoveVertex(vertex)) VertexRemoved?.Invoke(vertex);
                     else MessageBox.Show("Vertex was not in the graph.", "Vertex missing");
                 }
             }

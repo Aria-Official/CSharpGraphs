@@ -18,8 +18,8 @@
             <MenuItem Header="Graph">
                 <MenuItem Header="New"
                           Command="{Binding OpenNewGraphPromptWindowCommand}"/>
-                <MenuItem Header="Open from file"/>
-                <MenuItem Header="Save as file"/>
+                <MenuItem Header="Open from file"
+                          Command="{Binding OpenGraphFromFileCommand}"/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
@@ -60,7 +60,7 @@
                           VerticalAlignment="Stretch"
                           ShowsPreview="True"/>
             <local:ExplorerView Grid.Column="2"
-                                     DataContext="{Binding ExplorerVM}"/>
+                                DataContext="{Binding ExplorerVM}"/>
         </Grid>
     </Grid>
 </UserControl>

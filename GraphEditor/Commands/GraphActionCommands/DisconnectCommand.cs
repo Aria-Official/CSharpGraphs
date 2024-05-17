@@ -3,17 +3,13 @@ using GraphEditor.Models;
 using GraphEditor.VMs;
 using System.Windows;
 using System;
-using GraphEditor.Models.CustomEventArgs;
 namespace GraphEditor.Commands.GraphActionCommands
 {
     class DisconnectCommand : SyncCommand
     {
         readonly ActionsVM actionsVM;
-        public event Action<EdgeEventArgs>? Disconnected;
-        public DisconnectCommand(ActionsVM actionsVM)
-        {
-            this.actionsVM = actionsVM;
-        }
+        public event Action<int, int>? Disconnected;
+        public DisconnectCommand(ActionsVM actionsVM) => this.actionsVM = actionsVM;
         public override void Execute(object? parameter)
         {
             try
@@ -30,16 +26,15 @@ namespace GraphEditor.Commands.GraphActionCommands
                                                                "Edge start doesn't parse to an integer.");
                 InputParser.ParseVertex(edgeEnd, out int v2, "Edge end was not specified.",
                                                              "Edge end doesn't parse to an integer.");
-                EdgeEventArgs e = new(v1, v2);
                 if (weightedGraphNull)
                 {
                     actionsVM.Graph!.Disconnect(v1, v2);
-                    Disconnected?.Invoke(e);
+                    Disconnected?.Invoke(v1, v2);
                 }
                 else
                 {
                     actionsVM.WeightedGraph!.Disconnect(v1, v2);
-                    Disconnected?.Invoke(e);
+                    Disconnected?.Invoke(v1, v2);
                 }
             }
             catch (InvalidInputException IIExc) { MessageBox.Show(IIExc.Message, "Input error"); }

@@ -30,7 +30,8 @@
                   x:Name="ExplorerDataGrid"
                   SelectionMode="Single"
                   GridLinesVisibility="None"
-                  BorderBrush="LightGray">
+                  BorderBrush="LightGray"
+                  Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Graph name"
                             Binding="{Binding Name}"/>
@@ -42,9 +43,12 @@
                             MinWidth="70"/>
             </DataGrid.Columns>
             <DataGrid.Resources>
-                <ContextMenu x:Key="ItemContexMenu">
-                    <MenuItem Header="Close"/>
-                    <MenuItem Header="Save as"/>
+                <ContextMenu x:Key="ContextMenu"
+                             DataContext="{Binding Path=PlacementTarget.Tag, RelativeSource={x:Static RelativeSource.Self}}">
+                    <MenuItem Header="Save as"
+                              Command="{Binding SaveGraphCommand}"/>
+                    <MenuItem Header="Close"
+                              Command="{Binding CloseGraphCommand}"/>
                 </ContextMenu>
             </DataGrid.Resources>
             <DataGrid.CellStyle>
@@ -61,7 +65,8 @@
             </DataGrid.CellStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="ContextMenu" Value="{StaticResource ItemContexMenu}"/>
+                    <Setter Property="Tag" Value="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"/>
+                    <Setter Property="ContextMenu" Value="{StaticResource ContextMenu}"/>
                     <Setter Property="Margin" Value="0 0 0 2"/>
                     <Setter Property="Template">
                         <Setter.Value>
