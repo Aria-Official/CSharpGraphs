@@ -20,10 +20,10 @@ namespace GraphEditor.VMs
             ExplorerVM.GraphSelected += ActionsVM.ReactGraphSet;
             ExplorerVM.WeightedGraphSelected += ActionsVM.ReactWeightedGraphSet;
             ExplorerVM.CloseGraphCommand.GraphClosed += ExplorerVM.ReactGraphClosed;
-            ActionsVM.AddVertexCommand.VertexAdded += ObserverVM.DisplayOnVertexAdded;
-            ActionsVM.RemoveVertexCommand.VertexRemoved += ObserverVM.DisplayOnVertexRemoved;
-            ActionsVM.ConnectCommand.Connected += ObserverVM.DisplayOnEdgesChanged;
-            ActionsVM.DisconnectCommand.Disconnected += ObserverVM.DisplayOnEdgesChanged;
+            ActionsVM.AddVertexCommand.VertexAdded += ObserverVM.ReactVertexAdded;
+            ActionsVM.RemoveVertexCommand.VertexRemoved += ObserverVM.ReactVertexRemoved;
+            ActionsVM.ConnectCommand.Connected += ObserverVM.ReactEdgesChanged;
+            ActionsVM.DisconnectCommand.Disconnected += ObserverVM.ReactEdgesChanged;
             ObserverVM.GraphUpdated += ExplorerVM.ReactGraphUpdated;
             OpenNewGraphPromptWindowCommand = new();
             OpenGraphFromFileCommand = new();

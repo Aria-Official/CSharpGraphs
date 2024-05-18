@@ -2,7 +2,6 @@
 using GraphEditor.Models;
 using GraphEditor.VMs;
 using System.Windows;
-using System;
 namespace GraphEditor.Commands.GraphActionCommands
 {
     class HasEdgeCommand : SyncCommand

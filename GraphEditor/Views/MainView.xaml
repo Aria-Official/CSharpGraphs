@@ -29,7 +29,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TabControl Grid.Column="0">
-                <TabItem Header="Graph editor">
+                <TabItem Header="Edit graph">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -50,7 +50,7 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Run algorithms">
-
+                    <local:AlgorithmsView/>
                 </TabItem>
             </TabControl>
             <GridSplitter Grid.Column="1"

@@ -31,16 +31,18 @@
                   SelectionMode="Single"
                   GridLinesVisibility="None"
                   BorderBrush="LightGray"
-                  Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                  Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  SnapsToDevicePixels="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Graph name"
-                            Binding="{Binding Name}"/>
+                                    Binding="{Binding Name}"
+                                    MinWidth="80"/>
                 <DataGridTextColumn Header="Saved?"
-                            Binding="{Binding Saved}"
-                            MinWidth="50"/>
+                                    Binding="{Binding Saved}"
+                                    MinWidth="50"/>
                 <DataGridTextColumn Header="Type"
-                            Binding="{Binding GraphType}"
-                            MinWidth="70"/>
+                                    Binding="{Binding GraphType}"
+                                    MinWidth="70"/>
             </DataGrid.Columns>
             <DataGrid.Resources>
                 <ContextMenu x:Key="ContextMenu"

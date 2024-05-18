@@ -64,7 +64,11 @@ namespace GraphEditor.VMs
                 if (vs is not null)
                 {
                     foreach (int v in vs)
-                        GraphDisplay.Add($"{v} : {'{'} {string.Join(" ", graph.NeighboursOf(v)!)} {'}'}");
+                    {
+                        var neighs = graph.NeighboursOf(v)!;
+                        if (neighs.Count > 0) GraphDisplay.Add($"{v} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                        else GraphDisplay.Add($"{v} : {'{'} {'}'}");
+                    }
                 }
             }
             else
@@ -88,41 +92,59 @@ namespace GraphEditor.VMs
             {
                 foreach (int v in vs)
                 {
-                    foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v)!) SB.Append($"({n} : {w})");
-                    GraphDisplay.Add($"{v} : {'{'} {SB} {'}'}");
-                    SB.Clear();
+                    var neighs = weightedGraph.NeighboursWithWeightOf(v)!;
+                    if (neighs.Count > 0)
+                    {
+                        SB.Clear();
+                        foreach ((int n, int w) in neighs) SB.Append($"({n} : {w}) ");
+                        GraphDisplay.Add($"{v} : {'{'} {SB}{'}'}");
+                        SB.Clear();
+                    }
+                    else GraphDisplay.Add($"{v} : {'{'} {'}'}");
                 }
             }
         }
-        public void DisplayOnVertexAdded(int vertex)
+        public void ReactVertexAdded(int vertex)
         {
-            GraphDisplay.Add($"{vertex} : {"{  }"}");
+            DisplayOnVertexAdded(vertex);
+            GraphUpdated?.Invoke(name!);
+        }
+        public void ReactVertexRemoved(int vertex)
+        {
+            DisplayOnVertexRemoved(vertex);
+            GraphUpdated?.Invoke(name!);
+        }
+        public void ReactEdgesChanged(int v1, int v2)
+        {
+            DisplayOnEdgesChanged(v1, v2);
+            GraphUpdated?.Invoke(name!);
+        }
+        void DisplayOnVertexAdded(int vertex)
+        {
+            GraphDisplay.Add($"{vertex} : {"{ }"}");
             if (weightedGraph is null) Vertices = graph!.VertexCount.ToString();
             else Vertices = weightedGraph!.VertexCount.ToString();
-            GraphUpdated?.Invoke(new(name!));
         }
-        public void DisplayOnVertexRemoved(int vertex)
+        void DisplayOnVertexRemoved(int vertex)
         {
-            GraphUpdated?.Invoke(new(name!));
-            int removedIndex = 0,
-                    i = 0;
+            int removedIndex = 0, i = 0;
             string v = vertex.ToString();
             if (weightedGraph is null)
             {
                 for (; i < GraphDisplay.Count; ++i)
                 {
                     if (GraphDisplay[i].StartsWith(v)) { removedIndex = i; break; }
-                    else GraphDisplay[i] = GraphDisplay[i].Replace(v, string.Empty);
+                    else GraphDisplay[i] = GraphDisplay[i].Replace($"{v} ", string.Empty);
                 }
                 for (; i < GraphDisplay.Count; ++i)
-                    GraphDisplay[i] = GraphDisplay[i].Replace(v, string.Empty);
+                    GraphDisplay[i] = GraphDisplay[i].Replace($"{v} ", string.Empty);
                 GraphDisplay.RemoveAt(removedIndex);
                 Vertices = graph!.VertexCount.ToString();
                 Edges = graph.EdgeCount.ToString();
             }
             else
             {
-                string pattern = $"^({v} : [0-9]+)$";
+                string pattern = @"\(" + $"{v} : [0-9]+" + @"\) ";
                 for (; i < GraphDisplay.Count; ++i)
                 {
                     if (GraphDisplay[i].StartsWith(v)) { removedIndex = i; break; }
@@ -135,9 +157,8 @@ namespace GraphEditor.VMs
                 Edges = weightedGraph.EdgeCount.ToString();
             }
         }
-        public void DisplayOnEdgesChanged(int v1, int v2)
+        void DisplayOnEdgesChanged(int v1, int v2)
         {
-            GraphUpdated?.Invoke(new(name!));
             int i = 0;
             bool firstFound = false;
             if (weightedGraph is null)
@@ -146,12 +167,16 @@ namespace GraphEditor.VMs
                 {
                     if (GraphDisplay[i].StartsWith(v1.ToString()))
                     {
-                        GraphDisplay[i] = $"{v1} : {'{'} {string.Join(' ', graph!.NeighboursOf(v1)!)} {'}'}";
+                        var neighs = graph!.NeighboursOf(v1)!;
+                        if (neighs.Count > 0) GraphDisplay[i] = ($"{v1} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                        else GraphDisplay[i] = ($"{v1} : {'{'} {'}'}");
                         firstFound = true; break;
                     }
                     if (GraphDisplay[i].StartsWith(v2.ToString()))
                     {
-                        GraphDisplay[i] = $"{v2} : {'{'} {string.Join(' ', graph!.NeighboursOf(v2)!)} {'}'}";
+                        var neighs = graph!.NeighboursOf(v2)!;
+                        if (neighs.Count > 0) GraphDisplay[i] = ($"{v2} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                        else GraphDisplay[i] = ($"{v2} : {'{'} {'}'}");
                         break;
                     }
                 }
@@ -161,7 +186,9 @@ namespace GraphEditor.VMs
                     {
                         if (GraphDisplay[i].StartsWith(v2.ToString()))
                         {
-                            GraphDisplay[i] = $"{v2} : {'{'} {string.Join(' ', graph!.NeighboursOf(v2)!)} {'}'}";
+                            var neighs = graph!.NeighboursOf(v2)!;
+                            if (neighs.Count > 0) GraphDisplay[i] = ($"{v2} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                            else GraphDisplay[i] = ($"{v2} : {'{'} {'}'}");
                             break;
                         }
                     }
@@ -172,7 +199,9 @@ namespace GraphEditor.VMs
                     {
                         if (GraphDisplay[i].StartsWith(v1.ToString()))
                         {
-                            GraphDisplay[i] = $"{v1} : {'{'} {string.Join(' ', graph!.NeighboursOf(v1)!)} {'}'}";
+                            var neighs = graph!.NeighboursOf(v1)!;
+                            if (neighs.Count > 0) GraphDisplay[i] = ($"{v1} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                            else GraphDisplay[i] = ($"{v1} : {'{'} {'}'}");
                             break;
                         }
                     }
@@ -185,18 +214,28 @@ namespace GraphEditor.VMs
                 {
                     if (GraphDisplay[i].StartsWith(v1.ToString()))
                     {
-                        SB.Clear();
-                        foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v1)!) SB.Append($"({n} : {w}) ");
-                        GraphDisplay[i] = $"{v1} : {'{'} {SB}{'}'}";
-                        SB.Clear();
+                        var neighs = weightedGraph.NeighboursWithWeightOf(v1)!;
+                        if (neighs.Count > 0)
+                        {
+                            SB.Clear();
+                            foreach ((int n, int w) in neighs) SB.Append($"({n} : {w}) ");
+                            GraphDisplay[i] = $"{v1} : {'{'} {SB}{'}'}";
+                            SB.Clear();
+                        }
+                        else GraphDisplay[i] = $"{v1} : {'{'} {'}'}";
                         firstFound = true; break;
                     }
                     if (GraphDisplay[i].StartsWith(v2.ToString()))
                     {
-                        SB.Clear();
-                        foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v2)!) SB.Append($"({n} : {w}) ");
-                        GraphDisplay[i] = $"{v2} : {'{'} {SB}{'}'}";
-                        SB.Clear();
+                        var neighs = weightedGraph.NeighboursWithWeightOf(v2)!;
+                        if (neighs.Count > 0)
+                        {
+                            SB.Clear();
+                            foreach ((int n, int w) in neighs) SB.Append($"({n} : {w}) ");
+                            GraphDisplay[i] = $"{v2} : {'{'} {SB}{'}'}";
+                            SB.Clear();
+                        }
+                        else GraphDisplay[i] = $"{v2} : {'{'} {'}'}";
                         break;
                     }
                 }
@@ -206,10 +245,15 @@ namespace GraphEditor.VMs
                     {
                         if (GraphDisplay[i].StartsWith(v2.ToString()))
                         {
-                            SB.Clear();
-                            foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v2)!) SB.Append($"({n} : {w})");
-                            GraphDisplay[i] = $"{v2} : {'{'} {SB} {'}'}";
-                            SB.Clear();
+                            var neighs = weightedGraph.NeighboursWithWeightOf(v2)!;
+                            if (neighs.Count > 0)
+                            {
+                                SB.Clear();
+                                foreach ((int n, int w) in neighs) SB.Append($"({n} : {w}) ");
+                                GraphDisplay[i] = $"{v2} : {'{'} {SB}{'}'}";
+                                SB.Clear();
+                            }
+                            else GraphDisplay[i] = $"{v2} : {'{'} {'}'}";
                             break;
                         }
                     }
@@ -220,10 +264,15 @@ namespace GraphEditor.VMs
                     {
                         if (GraphDisplay[i].StartsWith(v1.ToString()))
                         {
-                            SB.Clear();
-                            foreach ((int n, int w) in weightedGraph.NeighboursWithWeightOf(v1)!) SB.Append($"({n} : {w})");
-                            GraphDisplay[i] = $"{v1} : {'{'} {SB} {'}'}";
-                            SB.Clear();
+                            var neighs = weightedGraph.NeighboursWithWeightOf(v1)!;
+                            if (neighs.Count > 0)
+                            {
+                                SB.Clear();
+                                foreach ((int n, int w) in neighs) SB.Append($"({n} : {w}) ");
+                                GraphDisplay[i] = $"{v1} : {'{'} {SB}{'}'}";
+                                SB.Clear();
+                            }
+                            else GraphDisplay[i] = $"{v1} : {'{'} {'}'}";
                             break;
                         }
                     }
