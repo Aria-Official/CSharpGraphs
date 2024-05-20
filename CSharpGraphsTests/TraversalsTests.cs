@@ -11,11 +11,6 @@ namespace CSharpGraphsTests
             Assert.Throws<ArgumentNullException>(() => { var dft = Traversals.DepthFirstTraversal<int>(null!, 0); });
         }
         [Test]
-        public void DFTThrowsOnEmptyGraph()
-        {
-            Assert.Throws<InvalidOperationException>(() => { var dft = Traversals.DepthFirstTraversal<char>(Graph<char>.Create(), 'A'); });
-        }
-        [Test]
         public void DFTThrowsOnMissingStart()
         {
             Assert.Throws<InvalidOperationException>(() => { var dft = Traversals.DepthFirstTraversal<double>(Graph<double>.Create(.0), .1); });
@@ -64,12 +59,6 @@ namespace CSharpGraphsTests
         public void BFTThrowsOnNullGraph()
         {
             Assert.Throws<ArgumentNullException>(() => { var bft = Traversals.BreadthFirstTraversal<int>(null!, 0); });
-        }
-        [Test]
-        public void BFTThrowsOnEmptyGraph()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-            { var bft = Traversals.BreadthFirstTraversal<char>(WeightedGraph<char, int>.Create(), 'A'); });
         }
         [Test]
         public void BFTThrowsOnMissingStart()

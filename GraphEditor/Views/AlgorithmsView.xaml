@@ -3,67 +3,101 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:atw="clr-namespace:GraphEditor.Models.AlgorithmsTreeView"
+             xmlns:vms="clr-namespace:GraphEditor.VMs"
              mc:Ignorable="d" 
-             d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignHeight="720"
+             d:DesignWidth="1280"
+             d:DataContext="{d:DesignInstance Type=vms:AlgorithmsVM}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <TreeView Grid.Column="0"
-                  Margin="4"
-                  BorderThickness="0">
-            <TreeViewItem Header="Algorithms"
-                          IsExpanded="True">
-                <TreeViewItem Header="Traversals"
-                              IsExpanded="True">
-                    <TreeViewItem Header="Depth first"/>
-                    <TreeViewItem Header="Breadth first"/>
-                </TreeViewItem>
-                <TreeViewItem Header="Shortest path"
-                              IsExpanded="True">
-                    <TreeViewItem Header="Dijkstra"
-                                  IsExpanded="True">
-                        <TreeViewItem Header="Paths' lengths"/>
-                        <TreeViewItem Header="Paths"/>
-                        <TreeViewItem Header="Both"/>
-                    </TreeViewItem>
-                    <TreeViewItem Header="A*"
-                                  IsExpanded="True">
-                        <TreeViewItem Header="Path's lengths"/>
-                        <TreeViewItem Header="Paths"/>
-                        <TreeViewItem Header="Both"/>
-                    </TreeViewItem>
-                </TreeViewItem>
-                <TreeViewItem Header="Connectivity"
-                              IsExpanded="True">
-                    <TreeViewItem Header="Strong connected components"/>
-                    <TreeViewItem Header="Is strong connected"/>
-                </TreeViewItem>
-                <TreeViewItem Header="Weight trees"
-                              IsExpanded="True">
-                    <TreeViewItem Header="Lowest cost weight tree"/>
-                    <TreeViewItem Header="Highest cost weight tree"/>
-                </TreeViewItem>
-            </TreeViewItem>
-        </TreeView>
-        <GridSplitter Grid.Column="1"
-                      Width="8"
-                      SnapsToDevicePixels="True"
-                      HorizontalAlignment="Center"/>
-        <Grid Grid.Column="2">
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
-            <RichTextBox Grid.Row="0"
-                         Margin="4"
-                         IsReadOnly="True"
-                         Focusable="False">
-                <RichTextBox.Style>
-                    <Style TargetType="RichTextBox">
+            <TreeView Grid.Row="0"
+                      Margin="4"
+                      BorderThickness="0"
+                      ItemsSource="{Binding AlgorithmsTreeViewNodes}"
+                      SelectedItemChanged="AlgorithmsTreeViewHandleSelectedItemChanged">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="True"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type atw:AlgorithmsTreeViewItemBase}">
+                        <Grid>
+                            <TextBlock Text="{Binding Header}"/>
+                        </Grid>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+            <Grid Grid.Row="1"
+                  Margin="0 4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0"
+                          Margin="0 0 0 10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="Start:"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 Padding="4 2"
+                                 Text="{Binding Start}"/>
+                        
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="Destination:"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 Padding="4 2"
+                                 Text="{Binding Destination}"/>
+                    </Grid>
+                </Grid>
+                <Button Grid.Column="1"
+                        Content="Run"
+                        Padding="16 4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Cursor="Hand"
+                        Command="{Binding ExecuteAlgorithmCommand}"/>
+            </Grid>
+            <TextBox Grid.Row="2"
+                     Margin="4"
+                     Focusable="False"
+                     IsReadOnly="True"
+                     Text="{Binding NodeDescription}"
+                     TextWrapping="WrapWithOverflow"
+                     TextAlignment="Justify">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate>
@@ -77,14 +111,49 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                </RichTextBox.Style>
-            </RichTextBox>
+                </TextBox.Style>
+            </TextBox>
+        </Grid>
+        
+        <GridSplitter Grid.Column="1"
+                      Width="8"
+                      SnapsToDevicePixels="True"
+                      HorizontalAlignment="Center"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0"
+                     Margin="4"
+                     IsReadOnly="True"
+                     Focusable="False"
+                     TextWrapping="WrapWithOverflow"
+                     Text="{Binding AlgorithmOutput}">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            SnapsToDevicePixels="True"
+                                            Background="{TemplateBinding Background}">
+                                        <ScrollViewer Name="PART_ContentHost"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
             <DockPanel Grid.Row="1"
                        Width="auto"
                        HorizontalAlignment="Right">
                 <Button Content="Save output as .txt file"
                         Margin="4" Padding="8 4"
-                        DockPanel.Dock="Right"/>
+                        DockPanel.Dock="Right"
+                        Cursor="Hand"/>
             </DockPanel>
         </Grid>
     </Grid>

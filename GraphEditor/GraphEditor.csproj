@@ -5,11 +5,11 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>GraphEditorIco.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\GraphEditorIco.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="GraphEditorIco.ico" />
+    <Content Include="Resources\GraphEditorIco.ico" />
   </ItemGroup>
 
   <ItemGroup>

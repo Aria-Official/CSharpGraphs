@@ -46,11 +46,11 @@
                                       VerticalAlignment="Stretch"
                                       ShowsPreview="True"/>
                         <local:ActionsView Grid.Column="2"
-                                                DataContext="{Binding ActionsVM}"/>
+                                           DataContext="{Binding ActionsVM}"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Run algorithms">
-                    <local:AlgorithmsView/>
+                    <local:AlgorithmsView DataContext="{Binding AlgorithmsVM}"/>
                 </TabItem>
             </TabControl>
             <GridSplitter Grid.Column="1"

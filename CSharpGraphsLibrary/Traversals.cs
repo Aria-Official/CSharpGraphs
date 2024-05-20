@@ -5,7 +5,6 @@
         public static IEnumerable<T> DepthFirstTraversal<T>(ITraversableGraph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
-            if (graph.VertexCount == 0) throw new InvalidOperationException($"Specified graph '{graph}' had no vertices.");
             if (!graph.HasVertex(start)) throw new InvalidOperationException($"Specified vertex '{start}' was not in the graph.");
             HashSet<T> visited = new();
             DFT(start);
@@ -26,7 +25,6 @@
         public static IEnumerable<T> BreadthFirstTraversal<T>(ITraversableGraph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
-            if (graph.VertexCount == 0) throw new InvalidOperationException($"Specified graph '{graph}' had no vertices.");
             if (!graph.HasVertex(start)) throw new InvalidOperationException($"Specified vertex '{start}' was not in the graph.");
             HashSet<T> visited = new(),
                        front = new() { start },
