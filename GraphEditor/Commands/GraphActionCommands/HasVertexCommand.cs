@@ -12,11 +12,12 @@ namespace GraphEditor.Commands.GraphActionCommands
         {
             try
             {
-                bool graphNull = actionsVM.Graph is null,
+                bool graphNull         = actionsVM.Graph is null,
                      weightedGraphNull = actionsVM.WeightedGraph is null;
                 if (graphNull && weightedGraphNull)
                 {
-                    MessageBox.Show("No graph opened to perform actions on.", "No graph"); return;
+                    MessageBox.Show("No graph opened to perform actions on.", "No graph");
+                    return;
                 }
                 string? v = actionsVM.Vertex;
                 InputParser.ParseVertex(v, out int vertex, "Vertex was not specified.",
@@ -32,7 +33,7 @@ namespace GraphEditor.Commands.GraphActionCommands
                     else MessageBox.Show("Vertex not found.", "Found");
                 }
             }
-            catch (InvalidInputException exc) { MessageBox.Show(exc.Message, "Input error"); }
+            catch (InvalidInputException e) { MessageBox.Show(e.Message, "Input error"); }
         }
     }
 }

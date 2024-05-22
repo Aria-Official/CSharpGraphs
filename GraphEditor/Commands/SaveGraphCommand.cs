@@ -22,17 +22,13 @@ namespace GraphEditor.Commands
             {
                 string path = System.IO.Path.GetFullPath(saveFileDialog.FileName);
                 Graph<int>? graph = explorerVM.GetGraphByName(graphName);
-                if (graph is not null)
-                {
-                    Graph<int>.SerializeAsXML(graph, path);
-                    explorerVM.SelectedGraphInfo.Saved = true;
-                }
+                if (graph is not null) Graph<int>.SerializeAsXML(graph, path);
                 else
                 {
                     WeightedGraph<int, int> weightedGraph = explorerVM.GetWeightedGraphByName(graphName)!;
                     WeightedGraph<int, int>.SerializeAsXML(weightedGraph, path);
-                    explorerVM.SelectedGraphInfo.Saved = true;
                 }
+                explorerVM.SelectedGraphInfo.Saved = true;
             }
         }
     }

@@ -4,7 +4,7 @@ namespace GraphEditor.Models
     class GraphInfo : VMBase
     {
         bool saved;
-        public string Name { get; set; }
+        public string Name { get; init; }
         public bool Saved
         {
             get => saved;
@@ -14,7 +14,7 @@ namespace GraphEditor.Models
                 NotifyPropertyChanged(nameof(Saved));
             }
         }
-        public GraphType GraphType { get; set; }
+        public GraphType GraphType { get; init; }
         public GraphInfo(string name, GraphType graphType)
         {
             Name = name;

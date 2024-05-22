@@ -4,14 +4,14 @@ namespace GraphEditor.VMs
 {
     class ActionsVM : VMBase
     {
-        public Graph<int>? Graph { get; private set; }
-        public WeightedGraph<int, int>? WeightedGraph { get; private set; }
         string? vertex,
                 edgeStart,
                 edgeEnd,
                 weight;
         bool oriented,
              weightOptionVisibility;
+        public Graph<int>? Graph { get; private set; }
+        public WeightedGraph<int, int>? WeightedGraph { get; private set; }
         public string? Vertex
         {
             get => vertex;

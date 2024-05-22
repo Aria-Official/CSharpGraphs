@@ -3,14 +3,16 @@ namespace GraphEditor.Models
 {
     static class InputParser
     {
-        public static void ParseVertex(string? input, out int vertex,
+        public static void ParseVertex(string? input, 
+                                       out int vertex,
                                        string emptyInputExcMsg,
                                        string parseFailsExcMsg)
         {
             if (input is null || input == string.Empty) throw new InvalidInputException(emptyInputExcMsg);
             if (!int.TryParse(input, out vertex)) throw new InvalidInputException(parseFailsExcMsg);
         }
-        public static void ParseWeight(string? input, out int weight,
+        public static void ParseWeight(string? input,
+                                       out int weight,
                                        string emptyInputExcMsg,
                                        string parseFailsExcMsg,
                                        string invalidValueExcMsg)

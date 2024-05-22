@@ -1,6 +1,5 @@
 ﻿using CSharpGraphsLibrary;
 using GraphEditor.Models;
-using GraphEditor.VMs;
 using Microsoft.Win32;
 using System;
 using System.Windows;
@@ -14,15 +13,15 @@ namespace GraphEditor.Commands
         public override void Execute(object? parameter)
         {
             OpenFileDialog dialog = new() { Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*" };
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() == true) // Returns 'bool?' so explicit comparison is required.
             {
-                string filename = dialog.FileName;
-                string graphName = System.IO.Path.GetFileNameWithoutExtension(filename);
-                bool? nameAllowed = AttemptToOpenNamedGraph?.Invoke(graphName);
-                if (!(bool)nameAllowed!)
+                string filename  = dialog.FileName,
+                       graphName = System.IO.Path.GetFileNameWithoutExtension(filename);
+                if (AttemptToOpenNamedGraph?.Invoke(graphName) != true) // Returns 'bool?' so explicit comparison is required.
                 {
-                    MessageBox.Show("Graph name constructed from filename conflicts with existing graph name.", 
-                                    "Name conflict"); return;
+                    MessageBox.Show("Graph name constructed from filename conflicts with existing graph name.",
+                                    "Name conflict");
+                    return;
                 }
                 try
                 {
@@ -32,7 +31,7 @@ namespace GraphEditor.Commands
                 }
                 catch
                 {
-                    try
+                    try // Nested 'try-catch' block required since deserialization methods throws exception on fail.
                     {
                         var weightedGraph = WeightedGraph<int, int>.DeserializeFromXML(filename);
                         GraphInfo graphInfo = new(graphName, GraphType.Weighted);

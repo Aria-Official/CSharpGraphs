@@ -14,14 +14,15 @@ namespace GraphEditor.Commands.GraphActionCommands
         {
             try
             {
-                bool graphNull = actionsVM.Graph is null,
+                bool graphNull         = actionsVM.Graph is null,
                      weightedGraphNull = actionsVM.WeightedGraph is null;
                 if (graphNull && weightedGraphNull)
                 {
-                    MessageBox.Show("No graph opened to perform actions on.", "No graph"); return;
+                    MessageBox.Show("No graph opened to perform actions on.", "No graph");
+                    return;
                 }
                 string? edgeStart = actionsVM.EdgeStart,
-                        edgeEnd = actionsVM.EdgeEnd;
+                        edgeEnd   = actionsVM.EdgeEnd;
                 InputParser.ParseVertex(edgeStart, out int v1, "Edge start was not specified.",
                                                                "Edge start doesn't parse to an integer.");
                 InputParser.ParseVertex(edgeEnd, out int v2, "Edge end was not specified.",
@@ -37,8 +38,8 @@ namespace GraphEditor.Commands.GraphActionCommands
                     Disconnected?.Invoke(v1, v2);
                 }
             }
-            catch (InvalidInputException IIExc) { MessageBox.Show(IIExc.Message, "Input error"); }
-            catch (InvalidOperationException IOExc) { MessageBox.Show(IOExc.Message, "Vertex missing"); }
+            catch (InvalidInputException IIe) { MessageBox.Show(IIe.Message, "Input error"); }
+            catch (InvalidOperationException IOe) { MessageBox.Show(IOe.Message, "Vertex missing"); }
         }
     }
 }

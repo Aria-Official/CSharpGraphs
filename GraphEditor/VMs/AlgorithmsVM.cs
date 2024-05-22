@@ -4,20 +4,19 @@ using GraphEditor.Models;
 using GraphEditor.Models.AlgorithmsTreeView;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-
 namespace GraphEditor.VMs
 {
     class AlgorithmsVM : VMBase
     {
         readonly AlgorithmExecutor algorithmExecutor;
-        public Graph<int>? Graph { get; private set; }
-        public WeightedGraph<int, int>? WeightedGraph { get; private set; }
         string? start,
                 destination,
                 nodeDescription,
                 algorithmOutput;
         ObservableCollection<AlgorithmsTreeViewItemBase> algorithmsTreeViewNodes;
         AlgorithmsTreeViewItemBase? algorithmsTreeViewSelectedNode;
+        public Graph<int>? Graph { get; private set; }
+        public WeightedGraph<int, int>? WeightedGraph { get; private set; }
         public string? Start
         {
             get => start;
@@ -57,7 +56,7 @@ namespace GraphEditor.VMs
         public ObservableCollection<AlgorithmsTreeViewItemBase> AlgorithmsTreeViewNodes
         {
             get => algorithmsTreeViewNodes;
-            private set
+            init
             {
                 algorithmsTreeViewNodes = value;
                 NotifyPropertyChanged(nameof(AlgorithmsTreeViewNodes));
@@ -74,6 +73,7 @@ namespace GraphEditor.VMs
         }
         public ICommand ExecuteAlgorithmCommand { get; }
         public ICommand SaveOutputToTextFileCommand { get; }
+#pragma warning disable CS8618
         public AlgorithmsVM()
         {
             algorithmExecutor = new(this);
@@ -144,7 +144,8 @@ namespace GraphEditor.VMs
                                         new AlgorithmsTreeViewItemAlgorithm
                                         {
                                             Header = "Path",
-                                            Description = StringConstants.AStarPathDesc
+                                            Description = StringConstants.AStarPathDesc,
+                                            Execution = algorithmExecutor.ExecuteAStarPath
                                         }
                                     }
                                 }
@@ -191,6 +192,7 @@ namespace GraphEditor.VMs
                     }
                 }
             };
+#pragma warning restore CS8618
         }
         public void ReactGraphSet(string _, Graph<int>? graph)
         {
@@ -206,7 +208,7 @@ namespace GraphEditor.VMs
         void OnAlgorithmsTreeViewSelectedNodeChanged()
         {
             if (algorithmsTreeViewSelectedNode is AlgorithmsTreeViewItemAlgorithm alg)
-                NodeDescription = alg.Description;
+                 NodeDescription = alg.Description;
             else NodeDescription = "Algorithm category selected. Select algorithm to see description.";
         }
     }

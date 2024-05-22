@@ -5,7 +5,7 @@ namespace GraphEditor.Models
 {
     static class AlgorithmOutputConstructor
     {
-        readonly static StringBuilder Builder = new();
+        static readonly StringBuilder Builder = new();
         public static string DFT(IEnumerable<int> e)
         {
             Builder.AppendLine("Depth first traversal executed.");

@@ -10,9 +10,7 @@ namespace GraphEditor.Commands
         public override void Execute(object? parameter)
         {
             if (algorithmsVM.AlgorithmsTreeViewSelectedNode is AlgorithmsTreeViewItemAlgorithm alg)
-            {
-                alg.Execution?.Invoke();
-            }
+                 alg.Execution?.Invoke();
             else MessageBox.Show("There was no algorithm selected to run.", "No algorithm selected");
         }
     }

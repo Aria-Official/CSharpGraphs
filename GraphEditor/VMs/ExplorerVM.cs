@@ -8,11 +8,11 @@ namespace GraphEditor.VMs
     class ExplorerVM : VMBase
     {
         readonly GraphHolder graphHolder;
+        readonly BindingList<GraphInfo> graphInfos;
+        GraphInfo? selectedGraphInfo;
         public event Action<string, Graph<int>?>? GraphSelected;
         public event Action<string, WeightedGraph<int, int>>? WeightedGraphSelected;
-        readonly BindingList<GraphInfo> graphInfos;
         public BindingList<GraphInfo> GraphInfos { get => graphInfos; }
-        GraphInfo? selectedGraphInfo;
         public GraphInfo? SelectedGraphInfo
         {
             get => selectedGraphInfo;
@@ -20,14 +20,7 @@ namespace GraphEditor.VMs
             {
                 selectedGraphInfo = value;
                 NotifyPropertyChanged(nameof(SelectedGraphInfo));
-                if (value is not null)
-                {
-                    string name = selectedGraphInfo!.Name;
-                    if (selectedGraphInfo!.GraphType == GraphType.Unweighted)
-                        GraphSelected?.Invoke(name, graphHolder.Graphs[name]);
-                    else WeightedGraphSelected?.Invoke(name, graphHolder.WeightedGraphs[name]);
-                }
-                else GraphSelected?.Invoke("no graph", null);
+                OnSelectedGraphInfoChanged(value);
             }
         }
         public SaveGraphCommand SaveGraphCommand { get; }
@@ -39,6 +32,17 @@ namespace GraphEditor.VMs
             SaveGraphCommand = new(this);
             CloseGraphCommand = new(this);
         }
+        void OnSelectedGraphInfoChanged(GraphInfo? graphInfo)
+        {
+            if (graphInfo is not null)
+            {
+                string name = graphInfo.Name;
+                if (graphInfo.GraphType == GraphType.Unweighted)
+                     GraphSelected?.Invoke(name, graphHolder.Graphs[name]);
+                else WeightedGraphSelected?.Invoke(name, graphHolder.WeightedGraphs[name]);
+            }
+            else GraphSelected?.Invoke("no graph", null);
+        }
         public bool VerifyAttemptToCreateNewGraph(GraphInfo graphInfo)
         {
             bool canAdd = VerifyGraphNameAllowed(graphInfo.Name);
@@ -46,7 +50,7 @@ namespace GraphEditor.VMs
             {
                 graphInfos.Add(graphInfo);
                 if (graphInfo.GraphType == GraphType.Unweighted)
-                    graphHolder.Graphs.Add(graphInfo.Name, Graph<int>.Create());
+                     graphHolder.Graphs.Add(graphInfo.Name, Graph<int>.Create());
                 else graphHolder.WeightedGraphs.Add(graphInfo.Name, WeightedGraph<int, int>.Create());
                 SelectedGraphInfo = graphInfo;
             }
@@ -60,7 +64,8 @@ namespace GraphEditor.VMs
         public bool VerifyGraphNameAllowed(string graphName)
         {
             bool allow = true;
-            foreach (GraphInfo graphInfo in graphInfos) if (graphInfo.Name == graphName) { allow = false; break; }
+            foreach (GraphInfo graphInfo in graphInfos) 
+                if (graphInfo.Name == graphName) { allow = false; break; }
             return allow;
         }
         public void ReactGraphOpened(GraphInfo graphInfo, Graph<int> graph)
@@ -79,7 +84,8 @@ namespace GraphEditor.VMs
         }
         public void ReactGraphClosed()
         {
-            if (SelectedGraphInfo!.GraphType == GraphType.Unweighted) graphHolder.Graphs.Remove(SelectedGraphInfo.Name);
+            if (SelectedGraphInfo!.GraphType == GraphType.Unweighted)
+                 graphHolder.Graphs.Remove(SelectedGraphInfo.Name);
             else graphHolder.WeightedGraphs.Remove(SelectedGraphInfo.Name);
             GraphInfos.Remove(SelectedGraphInfo!);
             if (graphInfos.Count > 0) SelectedGraphInfo = GraphInfos[0];

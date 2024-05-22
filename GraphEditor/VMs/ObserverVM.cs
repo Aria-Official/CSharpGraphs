@@ -8,14 +8,14 @@ namespace GraphEditor.VMs
 {
     class ObserverVM : VMBase
     {
-        public event Action<string>? GraphUpdated;
+        readonly StringBuilder SB = new();
+        readonly ObservableCollection<string> graphDisplay;
         Graph<int>? graph;
         WeightedGraph<int, int>? weightedGraph;
-        readonly StringBuilder SB = new();
         string? vertices,
                 edges,
                 name;
-        readonly ObservableCollection<string> graphDisplay;
+        public event Action<string>? GraphUpdated;
         public string? Vertices
         {
             get => $"Vertices: {vertices}";
@@ -58,7 +58,6 @@ namespace GraphEditor.VMs
             {
                 Vertices = graph.VertexCount.ToString();
                 Edges = graph.EdgeCount.ToString();
-                // Display graph here.
                 GraphDisplay.Clear();
                 IEnumerable<int>? vs = graph.Vertices();
                 if (vs is not null)
@@ -85,7 +84,6 @@ namespace GraphEditor.VMs
             this.weightedGraph = weightedGraph;
             Vertices = weightedGraph.VertexCount.ToString();
             Edges = weightedGraph.EdgeCount.ToString();
-            // Display graph here.
             GraphDisplay.Clear();
             IEnumerable<int>? vs = weightedGraph.Vertices();
             if (vs is not null)
@@ -168,14 +166,17 @@ namespace GraphEditor.VMs
                     if (GraphDisplay[i].StartsWith(v1.ToString()))
                     {
                         var neighs = graph!.NeighboursOf(v1)!;
-                        if (neighs.Count > 0) GraphDisplay[i] = ($"{v1} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                        if (neighs.Count > 0)
+                             GraphDisplay[i] = ($"{v1} : {'{'} {string.Join(' ', neighs)} {'}'}");
                         else GraphDisplay[i] = ($"{v1} : {'{'} {'}'}");
-                        firstFound = true; break;
+                        firstFound = true;
+                        break;
                     }
                     if (GraphDisplay[i].StartsWith(v2.ToString()))
                     {
                         var neighs = graph!.NeighboursOf(v2)!;
-                        if (neighs.Count > 0) GraphDisplay[i] = ($"{v2} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                        if (neighs.Count > 0)
+                             GraphDisplay[i] = ($"{v2} : {'{'} {string.Join(' ', neighs)} {'}'}");
                         else GraphDisplay[i] = ($"{v2} : {'{'} {'}'}");
                         break;
                     }
@@ -187,7 +188,8 @@ namespace GraphEditor.VMs
                         if (GraphDisplay[i].StartsWith(v2.ToString()))
                         {
                             var neighs = graph!.NeighboursOf(v2)!;
-                            if (neighs.Count > 0) GraphDisplay[i] = ($"{v2} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                            if (neighs.Count > 0)
+                                 GraphDisplay[i] = ($"{v2} : {'{'} {string.Join(' ', neighs)} {'}'}");
                             else GraphDisplay[i] = ($"{v2} : {'{'} {'}'}");
                             break;
                         }
@@ -200,7 +202,8 @@ namespace GraphEditor.VMs
                         if (GraphDisplay[i].StartsWith(v1.ToString()))
                         {
                             var neighs = graph!.NeighboursOf(v1)!;
-                            if (neighs.Count > 0) GraphDisplay[i] = ($"{v1} : {'{'} {string.Join(' ', neighs)} {'}'}");
+                            if (neighs.Count > 0)
+                                 GraphDisplay[i] = ($"{v1} : {'{'} {string.Join(' ', neighs)} {'}'}");
                             else GraphDisplay[i] = ($"{v1} : {'{'} {'}'}");
                             break;
                         }
@@ -223,7 +226,8 @@ namespace GraphEditor.VMs
                             SB.Clear();
                         }
                         else GraphDisplay[i] = $"{v1} : {'{'} {'}'}";
-                        firstFound = true; break;
+                        firstFound = true;
+                        break;
                     }
                     if (GraphDisplay[i].StartsWith(v2.ToString()))
                     {

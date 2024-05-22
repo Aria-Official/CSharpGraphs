@@ -15,12 +15,13 @@ namespace GraphEditor.Models
         {
             try
             {
-                InputParser.ParseVertex(algorithmsVM.Start, out int start,
+                InputParser.ParseVertex(algorithmsVM.Start,
+                                        out int start,
                                         "Start start was not specified.",
                                         "Start start doesn't parse to an integer.");
                 IEnumerable<int> DFT;
                 if (algorithmsVM.Graph is not null)
-                    DFT = Traversals.DepthFirstTraversal(algorithmsVM.Graph, start);
+                     DFT = Traversals.DepthFirstTraversal(algorithmsVM.Graph, start);
                 else DFT = Traversals.DepthFirstTraversal(algorithmsVM.WeightedGraph!, start);
                 AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.DFT(DFT));
             }
@@ -31,12 +32,13 @@ namespace GraphEditor.Models
         {
             try
             {
-                InputParser.ParseVertex(algorithmsVM.Start, out int start,
+                InputParser.ParseVertex(algorithmsVM.Start,
+                                        out int start,
                                         "Start start was not specified.",
                                         "Start start doesn't parse to an integer.");
                 IEnumerable<int> BFT;
                 if (algorithmsVM.Graph is not null)
-                    BFT = Traversals.BreadthFirstTraversal(algorithmsVM.Graph, start);
+                     BFT = Traversals.BreadthFirstTraversal(algorithmsVM.Graph, start);
                 else BFT = Traversals.BreadthFirstTraversal(algorithmsVM.WeightedGraph!, start);
                 AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.BFT(BFT));
             }
@@ -47,12 +49,13 @@ namespace GraphEditor.Models
         {
             try
             {
-                InputParser.ParseVertex(algorithmsVM.Start, out int start,
+                InputParser.ParseVertex(algorithmsVM.Start,
+                                        out int start,
                                         "Start start was not specified.",
                                         "Start start doesn't parse to an integer.");
                 Dictionary<int, int> pathLengths;
                 if (algorithmsVM.Graph is not null)
-                    pathLengths = Paths.Dijkstra.ShortestPathLengths(algorithmsVM.Graph, start);
+                     pathLengths = Paths.Dijkstra.ShortestPathLengths(algorithmsVM.Graph, start);
                 else pathLengths = Paths.Dijkstra.ShortestPathLengths(algorithmsVM.WeightedGraph!, start,
                     (a, b) =>
                     {
@@ -70,12 +73,13 @@ namespace GraphEditor.Models
         {
             try
             {
-                InputParser.ParseVertex(algorithmsVM.Start, out int start,
+                InputParser.ParseVertex(algorithmsVM.Start,
+                                        out int start,
                                         "Start start was not specified.",
                                         "Start start doesn't parse to an integer.");
                 Dictionary<int, int> prevs;
                 if (algorithmsVM.Graph is not null)
-                    prevs = Paths.Dijkstra.ShortestPaths(algorithmsVM.Graph, start);
+                     prevs = Paths.Dijkstra.ShortestPaths(algorithmsVM.Graph, start);
                 else prevs = Paths.Dijkstra.ShortestPaths(algorithmsVM.WeightedGraph!, start,
                     (a, b) =>
                     {
@@ -95,10 +99,12 @@ namespace GraphEditor.Models
             {
                 if (algorithmsVM.WeightedGraph is not null)
                 {
-                    InputParser.ParseVertex(algorithmsVM.Start, out int start,
-                                        "Start vertex was not specified.",
-                                        "Start vertex doesn't parse to an integer.");
-                    InputParser.ParseVertex(algorithmsVM.Destination, out int destination,
+                    InputParser.ParseVertex(algorithmsVM.Start,
+                                            out int start,
+                                            "Start vertex was not specified.",
+                                            "Start vertex doesn't parse to an integer.");
+                    InputParser.ParseVertex(algorithmsVM.Destination,
+                                            out int destination,
                                             "Destination vertex was not specified.",
                                             "Destination vertex doesn't parse to an integer.");
                     AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.AStarPathLength(
@@ -118,16 +124,18 @@ namespace GraphEditor.Models
             catch (InvalidInputException IIe) { MessageBox.Show(IIe.Message, "Input error"); }
             catch (InvalidOperationException IOe) { MessageBox.Show(IOe.Message, "Missing vertex"); }
         }
-        public void ExecuteAStartPath()
+        public void ExecuteAStarPath()
         {
             try
             {
                 if (algorithmsVM.WeightedGraph is not null)
                 {
-                    InputParser.ParseVertex(algorithmsVM.Start, out int start,
-                                        "Start vertex was not specified.",
-                                        "Start vertex doesn't parse to an integer.");
-                    InputParser.ParseVertex(algorithmsVM.Destination, out int destination,
+                    InputParser.ParseVertex(algorithmsVM.Start,
+                                            out int start,
+                                            "Start vertex was not specified.",
+                                            "Start vertex doesn't parse to an integer.");
+                    InputParser.ParseVertex(algorithmsVM.Destination,
+                                            out int destination,
                                             "Destination vertex was not specified.",
                                             "Destination vertex doesn't parse to an integer.");
                     AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.AStarPath(
@@ -153,7 +161,7 @@ namespace GraphEditor.Models
             {
                 List<HashSet<int>> components;
                 if (algorithmsVM.Graph is not null)
-                    components = Connectivity.StrongConnectedComponents(algorithmsVM.Graph);
+                     components = Connectivity.StrongConnectedComponents(algorithmsVM.Graph);
                 else components = Connectivity.StrongConnectedComponents(algorithmsVM.WeightedGraph!);
                 AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.StrongConnectedComponents(components));
             }
@@ -166,7 +174,7 @@ namespace GraphEditor.Models
             {
                 bool isStrongConnected;
                 if (algorithmsVM.Graph is not null)
-                    isStrongConnected = Connectivity.IsStrongConnected(algorithmsVM.Graph);
+                     isStrongConnected = Connectivity.IsStrongConnected(algorithmsVM.Graph);
                 else isStrongConnected = Connectivity.IsStrongConnected(algorithmsVM.WeightedGraph!);
                 AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.IsStrongConnected(isStrongConnected));
             }
@@ -181,9 +189,10 @@ namespace GraphEditor.Models
                 {
                     if (Connectivity.IsStrongConnected(algorithmsVM.WeightedGraph))
                     {
-                        InputParser.ParseVertex(algorithmsVM.Start, out int start,
-                                        "Start vertex was not specified.",
-                                        "Start vertex doesn't parse to an integer.");
+                        InputParser.ParseVertex(algorithmsVM.Start,
+                                                out int start,
+                                                "Start vertex was not specified.",
+                                                "Start vertex doesn't parse to an integer.");
                         AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.LowestCostWeightTree(
                             WeightTrees.WeightTree(algorithmsVM.WeightedGraph, start,
                                 (a, b) =>
@@ -210,9 +219,10 @@ namespace GraphEditor.Models
                 {
                     if (Connectivity.IsStrongConnected(algorithmsVM.WeightedGraph))
                     {
-                        InputParser.ParseVertex(algorithmsVM.Start, out int start,
-                                        "Start vertex was not specified.",
-                                        "Start vertex doesn't parse to an integer.");
+                        InputParser.ParseVertex(algorithmsVM.Start,
+                                                out int start,
+                                                "Start vertex was not specified.",
+                                                "Start vertex doesn't parse to an integer.");
                         AlgorithmExecuted?.Invoke(AlgorithmOutputConstructor.HighestCostWeightTree(
                             WeightTrees.WeightTree(algorithmsVM.WeightedGraph, start,
                                 (a, b) =>
