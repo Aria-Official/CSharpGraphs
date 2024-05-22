@@ -4,7 +4,6 @@ using GraphEditor.Models;
 using GraphEditor.Models.AlgorithmsTreeView;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
 
 namespace GraphEditor.VMs
 {
@@ -70,10 +69,11 @@ namespace GraphEditor.VMs
             set
             {
                 algorithmsTreeViewSelectedNode = value;
-                NodeDescription = algorithmsTreeViewSelectedNode!.Description;
+                OnAlgorithmsTreeViewSelectedNodeChanged();
             }
         }
         public ICommand ExecuteAlgorithmCommand { get; }
+        public ICommand SaveOutputToTextFileCommand { get; }
         public AlgorithmsVM()
         {
             algorithmExecutor = new(this);
@@ -95,14 +95,13 @@ namespace GraphEditor.VMs
                                 {
                                     Header = "Depth first",
                                     Description = StringConstants.DepthFirstTraversalsDesc,
-                                    AlgorithmInvoker = algorithmExecutor.ExecuteDFT,
-                                    Children = null
+                                    Execution = algorithmExecutor.ExecuteDFT
                                 },
                                 new AlgorithmsTreeViewItemAlgorithm
                                 {
                                     Header = "Breadth first",
                                     Description = StringConstants.BreadthFirstTraversalsDesc,
-                                    Children = null
+                                    Execution = algorithmExecutor.ExecuteBFT
                                 }
                             }
                         },
@@ -120,13 +119,13 @@ namespace GraphEditor.VMs
                                         {
                                             Header = "Paths' lengths",
                                             Description = StringConstants.DijkstraPathLengthsDesc,
-                                            Children = null
+                                            Execution = algorithmExecutor.ExecuteDijkstraPathLengths
                                         },
                                         new AlgorithmsTreeViewItemAlgorithm
                                         {
                                             Header = "Paths",
                                             Description = StringConstants.DijkstraPathsDesc,
-                                            Children = null
+                                            Execution = algorithmExecutor.ExecuteDijkstraPaths
                                         }
                                     }
                                 },
@@ -139,13 +138,12 @@ namespace GraphEditor.VMs
                                         {
                                             Header = "Path length",
                                             Description = StringConstants.AStarPathLengthDesc,
-                                            Children = null
+                                            Execution = algorithmExecutor.ExecuteAStarPathLength
                                         },
                                         new AlgorithmsTreeViewItemAlgorithm
                                         {
                                             Header = "Path",
-                                            Description = StringConstants.AStarPathDesc,
-                                            Children = null
+                                            Description = StringConstants.AStarPathDesc
                                         }
                                     }
                                 }
@@ -160,13 +158,13 @@ namespace GraphEditor.VMs
                                 {
                                     Header = "Strong connected components",
                                     Description = StringConstants.StrongConnectedComponentsDesc,
-                                    Children = null
+                                    Execution = algorithmExecutor.ExecuteStrongConnectedComponents
                                 },
                                 new AlgorithmsTreeViewItemAlgorithm
                                 {
                                     Header = "Is strong connected",
                                     Description = StringConstants.IsStrongConnectedDesc,
-                                    Children = null
+                                    Execution = algorithmExecutor.ExecuteIsStrongConnected
                                 }
                             }
                         },
@@ -179,13 +177,13 @@ namespace GraphEditor.VMs
                                 {
                                     Header = "Lowest cost weight tree",
                                     Description = StringConstants.LowestCostWeightTreeDesc,
-                                    Children = null
+                                    Execution = algorithmExecutor.ExecuteLowestCostWeightTree
                                 },
                                 new AlgorithmsTreeViewItemAlgorithm
                                 {
                                     Header = "Highest cost weight tree",
                                     Description = StringConstants.HighestCostWeightTreeDesc,
-                                    Children = null
+                                    Execution = algorithmExecutor.ExecuteHighestCostWeightTree
                                 }
                             }
                         }
@@ -204,5 +202,11 @@ namespace GraphEditor.VMs
             WeightedGraph = weightedGraph;
         }
         void DisplayOnAlgorithmExecuted(string output) => AlgorithmOutput = output;
+        void OnAlgorithmsTreeViewSelectedNodeChanged()
+        {
+            if (algorithmsTreeViewSelectedNode is AlgorithmsTreeViewItemAlgorithm alg)
+                NodeDescription = alg.Description;
+            else NodeDescription = "Algorithm category selected. Select algorithm to see description.";
+        }
     }
 }

@@ -11,9 +11,9 @@ namespace GraphEditor.Commands
         {
             if (algorithmsVM.AlgorithmsTreeViewSelectedNode is AlgorithmsTreeViewItemAlgorithm alg)
             {
-                alg.AlgorithmInvoker?.Invoke();
+                alg.Execution?.Invoke();
             }
-            else MessageBox.Show("There wasn't selected algorithm to run.", "No algorithm selected");
+            else MessageBox.Show("There was no algorithm selected to run.", "No algorithm selected");
         }
     }
 }
