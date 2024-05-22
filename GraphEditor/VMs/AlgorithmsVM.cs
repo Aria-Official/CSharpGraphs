@@ -79,6 +79,7 @@ namespace GraphEditor.VMs
             algorithmExecutor = new(this);
             algorithmExecutor.AlgorithmExecuted += DisplayOnAlgorithmExecuted;
             ExecuteAlgorithmCommand = new ExecuteAlgorithmCommand(this);
+            SaveOutputToTextFileCommand = new SaveOutputToTextFileCommand(this);
             AlgorithmsTreeViewNodes = new()
             {
                 new AlgorithmsTreeViewItemCategory

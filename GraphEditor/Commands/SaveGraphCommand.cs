@@ -18,7 +18,7 @@ namespace GraphEditor.Commands
                 CreatePrompt = true,
                 OverwritePrompt = true,
             };
-            if (saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true) // Returns 'bool?' so explicit comparison is required.
             {
                 string path = System.IO.Path.GetFullPath(saveFileDialog.FileName);
                 Graph<int>? graph = explorerVM.GetGraphByName(graphName);
