@@ -7,17 +7,17 @@ namespace GraphEditor.Commands
 {
     class TryCreateNewGraphCommand : SyncCommand
     {
-        readonly NewGraphPromptVM newGraphPromptViewModel;
+        readonly NewGraphPromptVM newGraphPromptVM;
         public event Func<GraphInfo, bool>? AttemptToCreateNewGraph;
-        public TryCreateNewGraphCommand(NewGraphPromptVM newGraphPromptViewModel)
+        public TryCreateNewGraphCommand(NewGraphPromptVM newGraphPromptVM)
         {
-            this.newGraphPromptViewModel = newGraphPromptViewModel;
+            this.newGraphPromptVM = newGraphPromptVM;
             AttemptToCreateNewGraph += MainVMStore.MainVM.ExplorerVM.VerifyAttemptToCreateNewGraph;
         }
         public override void Execute(object? parameter)
         {
-            string? graphName = newGraphPromptViewModel.GraphName;
-            bool weighted = newGraphPromptViewModel.Weighted;
+            string? graphName = newGraphPromptVM.GraphName;
+            bool weighted = newGraphPromptVM.Weighted;
             if (graphName is null || graphName == string.Empty)
             {
                 MessageBox.Show("Graph name was not specified. Specify graph name.",
@@ -26,7 +26,7 @@ namespace GraphEditor.Commands
             }
             GraphInfo graphInfo = new(graphName, weighted ? GraphType.Weighted : GraphType.Unweighted);
             bool? canAdd = AttemptToCreateNewGraph?.Invoke(graphInfo);
-            if (canAdd == true) // Returns 'bool?' so explicit comparison is required.
+            if (canAdd != true) // Returns 'bool?' so explicit comparison is required.
                 MessageBox.Show("Graph with specified name already exists. Specify other name.",
                                 "Existing graph name");
         }

@@ -25,8 +25,8 @@ namespace GraphEditor.VMs
                 NotifyPropertyChanged(nameof(Weighted));
             }
         }
-        public ICommand CreateNewGraphCommand { get; set; }
-        public ICommand CloseWindow { get; set; }
+        public ICommand CreateNewGraphCommand { get; }
+        public ICommand CloseWindow { get; }
         public NewGraphPromptVM()
         {
             CreateNewGraphCommand = new TryCreateNewGraphCommand(this);

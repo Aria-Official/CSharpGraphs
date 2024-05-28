@@ -10,7 +10,7 @@
         public const string AStarPathDesc = "Finds shortest path (i.e. sequence of vertices) between specified start and destination vertices using A* algorithm with no heuristic.\nRequires both start and destination vertices input.\nWorks for weighted graphs only.";
         public const string StrongConnectedComponentsDesc = "Finds sets of vertices representing strong connected components.\nDoes not require any input.\nWorks both for graphs and weighted graphs.";
         public const string IsStrongConnectedDesc = "Examines whether graph is fully strong connected.\nDoes not require any input.\nWorks both for graphs and weighted graphs.";
-        public const string LowestCostWeightTreeDesc = "Finds set of edges representing weight tree of lowest cost.\nWorks only for strong connected weighted graphs (best for disoriented).\nRequires only start vertex input. Destination input will be ignored.";
-        public const string HighestCostWeightTreeDesc = "Finds set of edges representing weight tree of highest cost.\nWorks only for strong connected weighted graphs (best for disoriented).\nRequires only start vertex input. Destination input will be ignored.";
+        public const string LowestCostWeightTreeDesc = "Finds set of edges representing weight tree of lowest cost.\nWorks only for strong connected weighted graphs (works with no mistakes for disoriented).\nRequires only start vertex input. Destination input will be ignored.";
+        public const string HighestCostWeightTreeDesc = "Finds set of edges representing weight tree of highest cost.\nWorks only for strong connected weighted graphs (works with no mistakes for disoriented).\nRequires only start vertex input. Destination input will be ignored.";
     }
 }
