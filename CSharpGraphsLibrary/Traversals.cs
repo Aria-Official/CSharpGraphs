@@ -1,7 +1,19 @@
 ﻿namespace CSharpGraphsLibrary
 {
+    /// <summary>
+    /// Provides container for graph traversal algorithms.
+    /// </summary>
     public static class Traversals
     {
+        /// <summary>
+        /// Traverses specified graph using depth first search (DFS) starting with specified start vertex.
+        /// </summary>
+        /// <typeparam name="T">Type of graph vertex.</typeparam>
+        /// <param name="graph">Graph to be traversed.</param>
+        /// <param name="start">Vertex to start traversal from.</param>
+        /// <returns>Enumerable sequence of vertices representing result of depth first traversal (DFT).</returns>
+        /// <exception cref="ArgumentNullException">Is thrown when specified graph is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">Is thrown when specified start vertex is not in the specified graph.</exception>
         public static IEnumerable<T> DepthFirstTraversal<T>(ITraversableGraph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
@@ -22,6 +34,15 @@
                 }
             }
         }
+        /// <summary>
+        /// Traverses specified graph using breadth first search (BFS) starting with specified start vertex.
+        /// </summary>
+        /// <typeparam name="T">Type of graph vertex.</typeparam>
+        /// <param name="graph">Graph to be traversed.</param>
+        /// <param name="start">Vertex to start traversal from.</param>
+        /// <returns>Enumerable sequence of vertices representing result of breadth first traversal (BFT).</returns>
+        /// <exception cref="ArgumentNullException">Is thrown when specified graph is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">Is thrown when specified start vertex is not in the specified graph.</exception>
         public static IEnumerable<T> BreadthFirstTraversal<T>(ITraversableGraph<T> graph, T start) where T : notnull
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");

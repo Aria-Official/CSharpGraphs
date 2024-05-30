@@ -1,5 +1,8 @@
 ﻿namespace CSharpGraphsLibrary
 {
+    /// <summary>
+    /// Provides container for path-oriented graph algorithms.
+    /// </summary>
     public static partial class Paths
     {
         static void GraphExceptionCheck<T>(Graph<T> graph, T start) where T : notnull
@@ -56,6 +59,16 @@
             result.Reverse();
             return result;
         }
+        /// <summary>
+        /// Creates path in the graph as a list of graph vertices from specified dictionary with pairs of kind
+        /// "(vertex; previous vertex in shortest path)" and specified destination vertex.
+        /// </summary>
+        /// <typeparam name="T">Type of object in specified dictionary.</typeparam>
+        /// <param name="paths">Dictionary with pairs of kind "(vertex; previous vertex in shortest path)".</param>
+        /// <param name="destination">Destination vertex of path to build.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Is thrown when specified dictionary is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">Is thrown when specified destination vertex is not in the specified dictionary.</exception>
         public static List<T> BuildPath<T>(Dictionary<T, T> paths, T destination) where T : notnull
         {
             if (paths is null) throw new ArgumentNullException($"Specified paths dictionary '{paths}' was null.");
