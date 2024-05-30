@@ -176,16 +176,16 @@ namespace CSharpGraphsLibrary
             return edges;
         }
         IEnumerable<TVertex>? ITraversableGraph<TVertex>.Vertices() => Vertices();
-        public static void SerializeAsXML(WeightedGraph<TVertex, TEdgeWeight> graph, string filename)
+        public static void SerializeAsXML(WeightedGraph<TVertex, TEdgeWeight> graph, string filePath)
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
-            using StreamWriter writer = new(filename);
+            using StreamWriter writer = new(filePath);
             XmlSerializer serializer = new(typeof(WeightedGraph<TVertex, TEdgeWeight>));
             serializer.Serialize(writer, graph);
         }
-        public static WeightedGraph<TVertex, TEdgeWeight> DeserializeFromXML(string filename)
+        public static WeightedGraph<TVertex, TEdgeWeight> DeserializeFromXML(string filePath)
         {
-            using FileStream stream = new(filename, FileMode.Open);
+            using FileStream stream = new(filePath, FileMode.Open);
             XmlSerializer serializer = new(typeof(WeightedGraph<TVertex, TEdgeWeight>));
             var graph = (WeightedGraph<TVertex, TEdgeWeight>?)serializer.Deserialize(stream);
             return graph is not null ? graph : throw new InvalidOperationException(

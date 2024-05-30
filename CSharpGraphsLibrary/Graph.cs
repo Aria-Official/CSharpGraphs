@@ -145,16 +145,16 @@ namespace CSharpGraphsLibrary
         }
         IEnumerable<T>? ITraversableGraph<T>.Vertices() => Vertices();
         IEnumerable<T>? ITraversableGraph<T>.NeighboursOf(T vertex) => NeighboursOf(vertex);
-        public static void SerializeAsXML(Graph<T> graph, string filename)
+        public static void SerializeAsXML(Graph<T> graph, string filePath)
         {
             if (graph is null) throw new ArgumentNullException($"Specified graph '{graph}' was null.");
-            using StreamWriter writer = new(filename);
+            using StreamWriter writer = new(filePath);
             XmlSerializer serializer = new(typeof(Graph<T>));
             serializer.Serialize(writer, graph);
         }
-        public static Graph<T> DeserializeFromXML(string filename)
+        public static Graph<T> DeserializeFromXML(string filePath)
         {
-            using FileStream stream = new(filename, FileMode.Open);
+            using FileStream stream = new(filePath, FileMode.Open);
             XmlSerializer serializer = new(typeof(Graph<T>));
             var graph = (Graph<T>?)serializer.Deserialize(stream);
             return graph is not null ? graph : throw new InvalidOperationException(
